@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.25;
+            color: #333333;
+        }
+
+        h1 {
+            color: #1a365d;
+            border-bottom: 2px solid #2b6cb0;
+            padding-bottom: 8px;
+            margin-top: 24px;
+            margin-bottom: 16px;
+        }
+
+        h2 {
+            color: #2b6cb0;
+            margin-top: 20px;
+            margin-bottom: 12px;
+        }
+
+        h3 {
+            color: #4a5568;
+            margin-top: 16px;
+            margin-bottom: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+            margin-bottom: 16px;
+        }
+
+        th {
+            background-color: #f7fafc;
+            color: #2d3748;
+            font-weight: bold;
+            border: 1px solid #e2e8f0;
+            padding: 10px;
+            text-align: left;
+        }
+
+        td {
+            border: 1px solid #e2e8f0;
+            padding: 10px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+
+        pre {
+            background-color: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            padding: 12px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            margin-top: 8px;
+            margin-bottom: 16px;
+        }
+
+        ul,
+        ol {
+            margin-top: 8px;
+            margin-bottom: 16px;
+            padding-left: 24px;
+        }
+
+        li {
+            margin-bottom: 6px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Curso de JSON: Estructuración y Validación de Esquemas de Datos</h1>
+
+    <h2>Índice General</h2>
+    <ol>
+        <li><a href="#introduccion-json">¿Qué es JSON y cuál es su propósito?</a></li>
+        <li><a href="#comparativa-xml">Evolución Histórica frente a XML</a></li>
+        <li><a href="#tipos-datos">Tipos de Datos Soportados en la Sintaxis</a></li>
+        <li><a href="#esquema-validacion">Validación Estructural mediante JSON Schema</a></li>
+        <li><a href="#implementacion-python">Caso Práctico: Validación de Esquemas utilizando Python</a></li>
+    </ol>
+
+    <div style="margin-bottom: 24px;"></div>
+
+    <h2 id="introduccion-json">1. ¿Qué es JSON y cuál es su propósito?</h2>
+    <p><b>JSON (JavaScript Object Notation)</b> es un formato de texto plano ligero diseñado para el intercambio de
+        datos entre servidores y aplicaciones web. Basado en una estructura de pares clave-valor, es completamente
+        independiente del lenguaje de programación utilizado, siendo fácilmente legible tanto por seres humanos como por
+        computadoras.</p>
+    <p>Los archivos de datos guardados bajo este estándar deben portar obligatoriamente la extensión corporativa
+        <code>.json</code>.</p>
+
+    <h2 id="comparativa-xml">2. Evolución Histórica frente a XML</h2>
+    <p>Antes de la adopción masiva de JSON, la industria dependía de lenguajes de marcado complejos como <b>XML
+            (eXtensible Markup Language)</b>, el cual requería una gran sobrecarga de etiquetas, volviendo las
+        transferencias de red lentas y difíciles de parsear.</p>
+
+    <h3>Diferencia de Legibilidad y Peso de Datos</h3>
+    <ul>
+        <li><b>Sintaxis Tradicional en XML:</b>
+            <pre>&lt;persona&gt;&lt;nombre&gt;Juan&lt;/nombre&gt;&lt;edad&gt;30&lt;/edad&gt;&lt;profesion&gt;Ingeniero&lt;/profesion&gt;&lt;/persona&gt;</pre>
+        </li>
+        <li><b>Sintaxis Optimizada en JSON:</b>
+            <pre>{"nombre": "Juan", "edad": 30, "profesion": "Ingeniero"}</pre>
+        </li>
+    </ul>
+
+    <h2 id="tipos-datos">3. Tipos de Datos Soportados en la Sintaxis</h2>
+    <p>JSON permite anidar estructuras complejas y soporta de forma nativa los siguientes tipos de datos:</p>
+    <ul>
+        <li><b>Strings (Cadenas):</b> Deben encerrarse estrictamente entre comillas dobles (<code>""</code>).</li>
+        <li><b>Numbers (Números):</b> Enteros o decimales de punto flotante.</li>
+        <li><b>Booleans:</b> Valores lógicos verdaderos o falsos (<code>true</code> / <code>false</code>).</li>
+        <li><b>Null:</b> Representación explícita de un valor vacío o nulo.</li>
+        <li><b>Arrays (Listas):</b> Colecciones ordenadas de datos encerradas entre corchetes (<code>[]</code>).</li>
+        <li><b>Objects (Objetos):</b> Colecciones de pares clave-valor delimitadas por llaves (<code>{}</code>).</li>
+    </ul>
+
+    <h3>Ejemplo Completo de Documento JSON Complejo</h3>
+    <pre>
+{
+  "nombre": "Juan",
+  "edad": 30,
+  "profesion": "Ingeniero",
+  "casado": false,
+  "hijos": ["Ana", "Luis"],
+  "direccion": {
+    "calle": "Calle Falsa 123",
+    "ciudad": "Springfield",
+    "pais": "USA"
+  },
+  "telefonos": [
+    {
+      "tipo": "casa",
+      "numero": "555-1234"
+    },
+    {
+      "tipo": "movil",
+      "numero": "555-5678"
+    }
+  ]
+}
+</pre>
+
+    <h2 id="esquema-validacion">4. Validación Estructural mediante JSON Schema</h2>
+    <p>Para garantizar que un archivo JSON recibido en una API posea los campos requeridos, los tipos de datos correctos
+        y rangos válidos antes de procesarlos, se utiliza un contrato denominado <b>JSON Schema</b>.</p>
+
+    <h3>Ejemplo de Esquema de Validación con Restricciones Avanzadas</h3>
+    <pre>
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "nombre": {
+      "type": "string"
+    },
+    "edad": {
+      "type": "integer"
+    },
+    "activo": {
+      "type": "boolean"
+    },
+    "anio_registro": {
+      "type": "integer",
+      "minimum": 1900,
+      "maximum": 2026
+    }
+  },
+  "required": ["nombre", "edad", "activo"]
+}
+</pre>
+
+    <h2 id="implementacion-python">5. Caso Práctico: Validación de Esquemas utilizando Python</h2>
+    <p>El siguiente script en Python demuestra cómo automatizar la validación de un documento de datos contra un esquema
+        predefinido utilizando la librería profesional <code>jsonschema</code>:</p>
+
+    <pre>
+import jsonschema
+from jsonschema import validate
+
+# 1. El documento de datos real (Payload recibido)
+documento_json = {
+    "nombre": "Juan",
+    "edad": 30,
+    "activo": True
+}
+
+# 2. El contrato estructural formal (JSON Schema)
+esquema_json = {
+    "type": "object",
+    "properties": {
+        "nombre": {"type": "string"},
+        "edad": {"type": "integer"},
+        "activo": {"type": "boolean"}
+    },
+    "required": ["nombre", "edad", "activo"]
+}
+
+# 3. Bloque de control y validación de excepciones
+try:
+    validate(instance=documento_json, schema=esquema_json)
+    print("Métrica Exitosa: El documento JSON es completamente válido según el contrato del esquema.")
+except jsonschema.exceptions.ValidationError as error_validacion:
+    print("Falla Estructural Detectada. Detalles de la anomalía:")
+    print(error_validacion.message)
+</pre>
+
+</body>
+
+</html>

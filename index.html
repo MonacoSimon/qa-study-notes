@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QA Study Notes | Repositorio Personal</title>
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --accent: #2563eb;
+            --accent-hover: #1d4ed8;
+            --border-color: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.5;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        header {
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            color: #0f172a;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        /* Barra de búsqueda interactiva */
+        .search-container {
+            max-width: 500px;
+            margin: 0 auto 3rem auto;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.8rem 1.2rem;
+            font-size: 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            background-color: var(--card-bg);
+            color: var(--text-main);
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .search-input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+
+        /* Grid de tarjetas */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+
+        .card-tags {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .tag {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+        }
+
+        .tag-automation {
+            background-color: #eff6ff;
+            color: #1e40af;
+        }
+
+        .tag-perf {
+            background-color: #fef2f2;
+            color: #991b1b;
+        }
+
+        .tag-security {
+            background-color: #faf5ff;
+            color: #6b21a8;
+        }
+
+        .tag-infra {
+            background-color: #f0fdf4;
+            color: #166534;
+        }
+
+        .tag-basics {
+            background-color: #f8fafc;
+            color: #475569;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-desc {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+            flex-grow: 1;
+        }
+
+        .card-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        .card:hover .card-action {
+            color: var(--accent-hover);
+        }
+
+        footer {
+            margin-top: 5rem;
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border-color);
+            padding-top: 1.5rem;
+        }
+
+        /* Estado vacío si la búsqueda no da resultados */
+        .no-results {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-muted);
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <header>
+            <h1>QA Study Notes</h1>
+            <p>Repositorio centralizado de apuntes, guías y documentación técnica de ingeniería de calidad.</p>
+        </header>
+
+        <div class="search-container">
+            <input type="text" id="searchInput" class="search-input" placeholder="Buscar un curso o tecnología...">
+        </div>
+
+        <main class="grid" id="coursesGrid">
+
+            <a href="curso-qa.html" class="card" data-title="qa manual aseguramiento calidad fundamentos">
+                <div>
+                    <div class="card-tags"><span class="tag tag-basics">Metodología</span></div>
+                    <h2 class="card-title">Aseguramiento de Calidad (QA)</h2>
+                    <p class="card-desc">Fundamentos de QA, ciclo PDCA, taxonomía de fallas (Error, Defecto, Bug, Falla)
+                        y diseño estratégico de un Test Plan profesional.</p>
+                </div>
+                <div class="card-action">Ver apuntes &rarr;</div>
+            </a>
+
+            <a href="curso-jira.html" class="card" data-title="jira software metodologias agiles scrum kanban bugs">
+                <div>
+                    <div class="card-tags"><span class="tag tag-basics">Gestión</span></div>
+                    <h2 class="card-title">Jira Software</h2>
+                    <p class="card-desc">Gestión ágil de proyectos bajo metodologías Scrum/Kanban, jerarquías de tickets
+                        (Épicas, Historias) y anatomía técnica del reporte de bugs.</p>
+                </div>
+                <div class="card-action">Ver apuntes &rarr;</div>
+            </a>
+
+            <a href="curso-cypress.html" class="card" data-title="cypress testing e2e automatizacion javascript">
+                <div>
+                    <div class="card-tags"><span class="tag tag-automation">Automation</span></div>
+                    <h2 class="card-title">Cypress Framework</h2>
+                    <p class="card-desc">Automatización E2E moderna, fixtures, testing de APIs, auditorías de
+                        accesibilidad web (A11y) y dockerización de entornos de prueba.</p>
+                </div>
+                <div class="card-action">Ver apuntes &rarr;</div>
+            </a>
+
+            <a href="curso-playwright.html" class="card"
+                data-title="playwright testing e2e automatizacion javascript typescript">
+                <div>
+                    <div class="card-tags"><span class="tag tag-automation">Automation</span></div>
+                    <h2 class="card-title">Playwright</h2>
+                    <p class="card-desc">Pruebas end-to-end con soporte nativo multi-navegador, modo headless,
+                        interactores inteligentes y aserciones avanzadas sobre el DOM.</p>
+                </div>
+                <div class="card-action">Ver apuntes &rarr;</div>
+            </a>
+
+            <a href="curso-postman.html" class="card" data-title="postman newman apis rest testing javascript cli">
+                <div>
+                    <div class="card-tags"><span class="tag tag-automation">API Testing</span></div>
+                    <h2 class="card-title">Postman & Newman</h2>
+                    <p class="card-desc">Validación y automatización de APIs REST/SOAP, flujos con tokens JWT,
+                        aserciones en JavaScript y ejecución por consola CLI para pipelines.</p>
+                </div>
+                <div class="card-action">Ver apuntes &rarr;</div>
+            </a>
+
+            <a href="curso-json.html" class="card" data-title="json schema validacion estructuras python datos">
+                <div>
+                    <div class="card-tags"><span class="tag tag-basics">Estructuras</span></div>
+                    <h2 class="card-title">JSON & JSON Schema</h2>
+                    <p class="card-desc">Estructuración correcta de datos, modelado de tipos, comparación frente a XML y
+                        validación robusta de contratos usando esquemas con Python.</p>
+                </div>
+                <div class="card-action">Ver apuntes &rarr;</div>
+            </a>
+
+            <a href="curso-jmeter.html" class="card"
+                data-title="jmeter performance testing carga estres hilos latencia">
+                <div>
+                    <div class="card-tags"><span class="tag tag-perf">Performance</span></div>
+                    <h2 class="card-title">Apache JMeter</h2>
+                    <p class="card-desc">Ingeniería de rendimiento, métricas críticas (Latencia, Throughput, Tiempos),
+                        grupos de hilos y modelado de curvas de inyección de carga.</p>
+                </div>
+                <div class="card-action">Ver apuntes &rarr;</div>
+            </a>
+
+            <a href="curso-owasp-zap.html" class="card" data-title="owasp zap seguridad pentesting proxy fuzzing">
+                <div>
+                    <div class="card-tags"><span class="tag tag-security">Seguridad</span></div>
+                    <h2 class="card-title">OWASP ZAP</h2>
+                    <p class="card-desc">Pruebas de penetración dinámicas (DAST), intercepción de tráfico SSL,
+                        metodologías de Fuzzing y escaneos autenticados con análisis regex.</p>
+                </div>
+                <div class="card-action">Ver apuntes &rarr;</div>
+            </a>
+
+            <a href="curso-aws.html" class="card"
+                data-title="aws amazon cloud localstack s3 dynamodb sqs serverless lambda python boto3">
+                <div>
+                    <div class="card-tags"><span class="tag tag-infra">Cloud</span></div>
+                    <h2 class="card-title">AWS con LocalStack</h2>
+                    <p class="card-desc">Emulación local de infraestructura en la nube (S3, DynamoDB, SQS, Lambdas) y
+                        desarrollo de scripts de automatización con el SDK Boto3 de Python.</p>
+                </div>
+                <div class="card-action">Ver apuntes &rarr;</div>
+            </a>
+
+            <a href="curso-docker.html" class="card"
+                data-title="docker contenedores imagenes dockerfile volumenes redes docker-compose">
+                <div>
+                    <div class="card-tags"><span class="tag tag-infra">DevOps</span></div>
+                    <h2 class="card-title">Docker</h2>
+                    <p class="card-desc">Aislamiento de aplicaciones en contenedores, creación de Dockerfiles
+                        corporativos, gestión de volúmenes persistentes, redes locales y compose.</p>
+                </div>
+                <div class="card-action">Ver apuntes &rarr;</div>
+            </a>
+
+            <a href="curso-jenkins.html" class="card"
+                data-title="jenkins pipelines cicd integracion continua docker scm">
+                <div>
+                    <div class="card-tags"><span class="tag tag-infra">CI/CD</span></div>
+                    <h2 class="card-title">Jenkins Pipelines</h2>
+                    <p class="card-desc">Orquestación de Integración y Entrega Continua (CI/CD), automatización de
+                        etapas del ciclo de vida del software e integración nativa con Docker y Git.</p>
+                </div>
+                <div class="card-action">Ver apuntes &rarr;</div>
+            </a>
+
+            <div id="noResults" class="no-results">
+                No se encontraron apuntes que coincidan con tu búsqueda.
+            </div>
+
+        </main>
+
+        <footer>
+            <p>qa-study-notes &bull; Licencia MIT &bull; Entorno local alineado con las buenas prácticas de la
+                industria.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Buscador interactivo en tiempo real
+        const searchInput = document.getElementById('searchInput');
+        const cards = document.querySelectorAll('.card');
+        const noResults = document.getElementById('noResults');
+
+        searchInput.addEventListener('input', (e) => {
+            const value = e.target.value.toLowerCase().trim();
+            let hasVisibleCards = false;
+
+            cards.forEach(card => {
+                const titleData = card.getAttribute('data-title');
+                if (titleData.includes(value)) {
+                    card.style.display = 'flex';
+                    hasVisibleCards = true;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            if (hasVisibleCards) {
+                noResults.style.display = 'none';
+            } else {
+                noResults.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+
+</html>

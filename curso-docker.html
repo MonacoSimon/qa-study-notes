@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.25;
+            color: #333333;
+        }
+
+        h1 {
+            color: #1a365d;
+            border-bottom: 2px solid #2b6cb0;
+            padding-bottom: 8px;
+            margin-top: 24px;
+            margin-bottom: 16px;
+        }
+
+        h2 {
+            color: #2b6cb0;
+            margin-top: 20px;
+            margin-bottom: 12px;
+        }
+
+        h3 {
+            color: #4a5568;
+            margin-top: 16px;
+            margin-bottom: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+            margin-bottom: 16px;
+        }
+
+        th {
+            background-color: #f7fafc;
+            color: #2d3748;
+            font-weight: bold;
+            border: 1px solid #e2e8f0;
+            padding: 10px;
+            text-align: left;
+        }
+
+        td {
+            border: 1px solid #e2e8f0;
+            padding: 10px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+
+        pre {
+            background-color: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            padding: 12px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            margin-top: 8px;
+            margin-bottom: 16px;
+        }
+
+        ul,
+        ol {
+            margin-top: 8px;
+            margin-bottom: 16px;
+            padding-left: 24px;
+        }
+
+        li {
+            margin-bottom: 6px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Curso de Docker: Contenedores y Orquestación desde Cero</h1>
+
+    <h2>Índice General</h2>
+    <ol>
+        <li><a href="#introduccion">Introducción a la Contenedorización</a></li>
+        <li><a href="#arquitectura">Contenedores frente a Máquinas Virtuales</a></li>
+        <li><a href="#conceptos-clave">Conceptos Clave de Docker</a></li>
+        <li><a href="#instalacion">Instalación y Verificación del Entorno</a></li>
+        <li><a href="#comandos-esenciales">Comandos Esenciales de la CLI</a></li>
+        <li><a href="#dockerfile">Anatomía y Construcción de un Dockerfile</a></li>
+        <li><a href="#docker-compose">Orquestación Multicontenedor con Docker Compose</a></li>
+    </ol>
+
+    <div style="margin-bottom: 24px;"></div>
+
+    <h2 id="introduccion">1. Introducción a la Contenedorización</h2>
+    <p><b>Docker</b> es una plataforma de código abierto diseñada para empaquetar, distribuir y ejecutar aplicaciones
+        dentro de entornos aislados denominados <b>contenedores</b>. Al encapsular el software junto con todas sus
+        dependencias (librerías, archivos de configuración y binarios), se garantiza el comportamiento idéntico del
+        sistema sin importar si se ejecuta en la computadora local de un desarrollador, en un servidor de pruebas o en
+        la infraestructura de la nube.</p>
+
+    <h2 id="arquitectura">2. Contenedores frente a Máquinas Virtuales</h2>
+    <p>Es común confundir el software de contenedores con la virtualización tradicional, pero sus arquitecturas internas
+        operan de manera muy distinta:</p>
+    <ul>
+        <li><b>Máquinas Virtuales (VM):</b> Requieren un hipervisor para simular hardware completo. Cada VM incluye un
+            sistema operativo invitado completo, lo que las vuelve pesadas, lentas al iniciar y demandantes en memoria
+            RAM y disco.</li>
+        <li><b>Contenedores Docker:</b> Comparten el núcleo (kernel) del sistema operativo anfitrión. No clonan el
+            hardware, lo que los convierte en procesos extremadamente ligeros, con arranques instantáneos de pocos
+            segundos y un consumo mínimo de recursos indispensables.</li>
+    </ul>
+
+
+
+    <h2 id="conceptos-clave">3. Conceptos Clave de Docker</h2>
+    <p>Para dominar el ecosistema, se debe asimilar la analogía de la gastronomía o la construcción:</p>
+    <ul>
+        <li><b>Dockerfile:</b> Archivo de texto plano con instrucciones secuenciales que actúan como la <i>receta de
+                cocina</i> o el plano técnico para construir una imagen.</li>
+        <li><b>Imagen (Image):</b> Es el paquete estático, inmutable y empaquetado resultante de compilar un Dockerfile
+            (el equivalente a la <i>receta preparada o molde listo</i>). Contiene el sistema base (como Ubuntu o
+            Alpine), configuraciones y el código de la app.</li>
+        <li><b>Contenedor (Container):</b> Es la instancia viva, dinámica y en ejecución de una imagen (siguiendo la
+            analogía: <i>el plato de comida servido en la mesa</i>).</li>
+        <li><b>Volumen (Volume):</b> Mecanismo de almacenamiento persistente mapeado fuera del ciclo de vida del
+            contenedor. Dado que los contenedores son efímeros por naturaleza (si se destruyen, sus datos se borran),
+            los volúmenes salvan la información de forma permanente.</li>
+        <li><b>Red (Network):</b> Canal virtual aislado que permite la comunicación interna y segura entre múltiples
+            contenedores.</li>
+    </ul>
+
+    <h2 id="instalacion">4. Instalación y Verificación del Entorno</h2>
+    <p><i>Nota: Para entornos Linux (Ubuntu/Debian), es indispensable que la virtualización esté habilitada en la BIOS
+            del procesador antes de iniciar.</i></p>
+
+    <pre>
+# Actualizar el índice de paquetes locales
+sudo apt update && sudo apt upgrade -y
+
+# Instalar dependencias previas de red y seguridad
+sudo apt install apt-transport-https ca-certificates curl software-properties-common -y
+
+# Agregar la clave criptográfica oficial de Docker
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+
+# Instalar el motor de Docker y su interfaz de comandos
+sudo apt install docker-ce docker-ce-cli containerd.io -y
+
+# Añadir tu usuario al grupo docker para evitar usar 'sudo' en cada instrucción
+sudo usermod -aG docker $USER
+newgrp docker
+</pre>
+
+    <h3>Resolución de Errores de Arranque</h3>
+    <p>Si al ejecutar <code>docker run hello-world</code> se muestra el mensaje <i>"Cannot connect to the Docker
+            daemon..."</i>, significa que el motor está apagado. Se soluciona forzando el inicio del servicio del
+        sistema:</p>
+    <pre>sudo systemctl start docker</pre>
+
+    <h2 id="comandos-esenciales">5. Comandos Esenciales de la CLI</h2>
+    <p>La línea de comandos permite inspeccionar el estado del motor y administrar los ciclos de vida de los
+        componentes:</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Comando</th>
+                <th>Acción / Propósito</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>docker --version</code></td>
+                <td>Muestra la versión de Docker instalada en el sistema.</td>
+            </tr>
+            <tr>
+                <td><code>docker images</code></td>
+                <td>Lista todas las imágenes descargadas o compiladas localmente.</td>
+            </tr>
+            <tr>
+                <td><code>docker ps</code></td>
+                <td>Lista únicamente los contenedores que se están ejecutando activamente.</td>
+            </tr>
+            <tr>
+                <td><code>docker ps -a</code></td>
+                <td>Muestra el historial completo de contenedores (activos y detenidos).</td>
+            </tr>
+            <tr>
+                <td><code>docker start [ID_O_NOMBRE]</code></td>
+                <td>Vuelve a encender un contenedor que se encontraba apagado.</td>
+            </tr>
+            <tr>
+                <td><code>docker stop [ID_O_NOMBRE]</code></td>
+                <td>Apaga de manera ordenada un contenedor en ejecución.</td>
+            </tr>
+            <tr>
+                <td><code>docker logs [ID]</code></td>
+                <td>Muestra las salidas de consola e historial impreso por el contenedor.</td>
+            </tr>
+            <tr>
+                <td><code>docker logs -f [ID]</code></td>
+                <td>Inspecciona los logs en tiempo real manteniendo la consola abierta (Follow).</td>
+            </tr>
+            <tr>
+                <td><code>docker exec -it [ID] sh</code></td>
+                <td>Abre una terminal interactiva (shell) dentro de un contenedor activo.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2 id="dockerfile">6. Anatomía y Construcción de un Dockerfile</h2>
+    <p>Las distribuciones ligeras como <b>Alpine Linux</b> son ampliamente utilizadas en entornos profesionales debido a
+        que pesan pocos megabytes, reduciendo drásticamente el tamaño final de la imagen.</p>
+
+    <h3>Ejemplo Práctico de Dockerfile Pro</h3>
+    <pre>
+# 1. Imagen base oficial ligera
+FROM alpine:latest
+
+# 2. Establecer el directorio de trabajo interno (creará la carpeta si no existe)
+WORKDIR /app
+
+# 3. Copiar archivos locales al directorio del contenedor
+COPY ./html/index.html /app/
+COPY ./html/script.sh /app/
+
+# 4. Ejecutar comandos de infraestructura en la construcción (Instalar Nginx)
+RUN apk add --no-cache nginx
+
+# 5. Otorgar permisos de ejecución al script operativo
+RUN chmod +x /app/script.sh
+
+# 6. Documentar el puerto de red expuesto internamente
+EXPOSE 80
+
+# 7. Comando definitivo por defecto al iniciar el contenedor
+CMD ["/app/script.sh"]
+</pre>
+
+    <h2 id="docker-compose">7. Orquestación Multicontenedor con Docker Compose</h2>
+    <p><b>Docker Compose</b> es una herramienta que permite definir y correr aplicaciones de múltiples contenedores
+        utilizando un único archivo de configuración estructurado en formato <b>YAML</b>
+        (<code>docker-compose.yml</code>).</p>
+
+    <h3>Ejemplo Práctico de Orquestación (Servidor Web + Contenedor de Soporte)</h3>
+    <pre>
+version: '3.8'
+
+services:
+  web-server:
+    image: nginx:alpine
+    container_name: servidor_web_frontend
+    ports:
+      - "8080:80"
+    volumes:
+      - ./html:/usr/share/nginx/html
+    networks:
+      - red-aplicacion
+
+  backend-task:
+    image: alpine:latest
+    container_name: contenedor_soporte_alpine
+    volumes:
+      - ./html:/html
+    command: sh -c "while true; do sleep 1000; done"
+    networks:
+      - red-aplicacion
+
+networks:
+  red-aplicacion:
+    driver: bridge
+</pre>
+
+    <h3>Comandos Clave de Docker Compose</h3>
+    <ul>
+        <li><b>Encender todos los servicios del archivo:</b> Levanta la infraestructura en segundo plano (detached
+            mode).
+            <pre>docker compose up -d</pre>
+        </li>
+        <li><b>Apagar y destruir los servicios:</b> Detiene los contenedores y limpia las redes virtuales creadas.
+            <pre>docker compose down</pre>
+        </li>
+    </ul>
+
+</body>
+
+</html>

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.25;
+            color: #333333;
+        }
+
+        h1 {
+            color: #1a365d;
+            border-bottom: 2px solid #2b6cb0;
+            padding-bottom: 8px;
+            margin-top: 24px;
+            margin-bottom: 16px;
+        }
+
+        h2 {
+            color: #2b6cb0;
+            margin-top: 20px;
+            margin-bottom: 12px;
+        }
+
+        h3 {
+            color: #4a5568;
+            margin-top: 16px;
+            margin-bottom: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+            margin-bottom: 16px;
+        }
+
+        th {
+            background-color: #f7fafc;
+            color: #2d3748;
+            font-weight: bold;
+            border: 1px solid #e2e8f0;
+            padding: 10px;
+            text-align: left;
+        }
+
+        td {
+            border: 1px solid #e2e8f0;
+            padding: 10px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+
+        pre {
+            background-color: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            padding: 12px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            margin-top: 8px;
+            margin-bottom: 16px;
+        }
+
+        ul,
+        ol {
+            margin-top: 8px;
+            margin-bottom: 16px;
+            padding-left: 24px;
+        }
+
+        li {
+            margin-bottom: 6px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Curso de JMeter: Ingeniería de Rendimiento y Pruebas de Carga</h1>
+
+    <h2>Índice General</h2>
+    <ol>
+        <li><a href="#conceptos-performance">Fundamentos de Performance Testing</a></li>
+        <li><a href="#metricas-clave">Métricas Críticas de Rendimiento</a></li>
+        <li><a href="#ciclo-vida-perf">Ciclo de Vida de las Pruebas de Carga</a></li>
+        <li><a href="#tipos-pruebas">Tipos de Pruebas de Rendimiento</a></li>
+        <li><a href="#parametros-hilos">Configuración de Parámetros en Grupos de Hilos</a></li>
+        <li><a href="#ejemplos-escenarios">Diseño Práctico de Escenarios de Inyección de Carga</a></li>
+        <li><a href="#analisis-casos">Caso de Estudio Analítico: Interpretación de Resultados</a></li>
+    </ol>
+
+    <div style="margin-bottom: 24px;"></div>
+
+    <h2 id="conceptos-performance">1. Fundamentos de Performance Testing</h2>
+    <p>Las <b>pruebas de rendimiento</b> evalúan la velocidad, escalabilidad, estabilidad y uso de recursos de una
+        aplicación bajo condiciones de carga específicas. En lugar de verificar flujos funcionales, analizan cómo
+        responde la infraestructura física y lógica de los servidores web cuando son sometidos a presión de usuarios
+        recurrentes.</p>
+
+    <h2 id="metricas-clave">2. Métricas Críticas de Rendimiento</h2>
+    <ul>
+        <li><b>Latencia (Latency):</b> El tiempo exacto que tarda un paquete de datos en viajar desde el cliente hacia
+            el servidor, excluyendo el tiempo que el servidor demora en procesar la lógica de la solicitud. Se mide
+            estrictamente en milisegundos (ms).</li>
+        <li><b>Rendimiento (Throughput):</b> Cantidad de trabajo efectivo o volumen de transacciones que el sistema bajo
+            análisis procesa por unidad de tiempo. Se mide comúnmente en Peticiones por Segundo (req/s) o Megabytes por
+            Segundo (MB/s).</li>
+        <li><b>Tiempo de Respuesta (Response Time):</b> El tiempo total transcurrido desde que el usuario realiza una
+            acción (clic) hasta que la interfaz gráfica renderiza por completo el resultado en pantalla. Incluye la
+            latencia más el tiempo de cómputo interno del servidor.</li>
+    </ul>
+
+    <h2 id="ciclo-vida-perf">3. Ciclo de Vida de las Pruebas de Carga</h2>
+    <ol>
+        <li><b>Planificación y Relevamiento:</b> Definir objetivos de rendimiento, identificar transacciones críticas de
+            negocio, establecer acuerdos de nivel de servicio (SLAs) y determinar métricas ideales toleradas.</li>
+        <li><b>Diseño de Escenarios:</b> Configurar scripts de prueba emulando los flujos del usuario, inyectar
+            variables e incluir esperas realistas.</li>
+        <li><b>Ejecución:</b> Correr las simulaciones de usuarios virtuales, preferentemente utilizando la CLI de JMeter
+            para optimizar el consumo de recursos de la máquina inyectora.</li>
+        <li><b>Análisis de Resultados:</b> Examinar las trazas recopiladas correlacionando los tiempos de respuesta con
+            el consumo de hardware (CPU, Memoria) del servidor.</li>
+        <li><b>Reporte:</b> Documentar los cuellos de botella encontrados y proponer estrategias de optimización
+            (tuning).</li>
+    </ol>
+
+    <h2 id="tipos-pruebas">4. Tipos de Pruebas de Rendimiento</h2>
+    <ul>
+        <li><b>Load Testing (Pruebas de Carga):</b> Evalúa el comportamiento del sistema bajo una carga de trabajo
+            típica y esperada de producción para asegurar que cumpla con los SLAs establecidos.</li>
+        <li><b>Stress Testing (Pruebas de Estrés):</b> Fuerza al sistema más allá de los límites normales o esperados de
+            carga para identificar el punto exacto de quiebre y evaluar la capacidad de recuperación del software.</li>
+        <li><b>Endurance Testing (Pruebas de Resistencia/Soporte):</b> Mantiene una carga constante y prolongada durante
+            horas o días para detectar fugas de memoria (Memory Leaks) o degradación progresiva de base de datos.</li>
+    </ul>
+
+    <h2 id="parametros-hilos">5. Configuración de Parámetros en Grupos de Hilos</h2>
+    <p>En Apache JMeter, los usuarios virtuales se definen como hilos (<b>Threads</b>). Para modelar curvas de carga
+        realistas, es fundamental dominar sus variables de configuración básicas:</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Parámetro Operativo</th>
+                <th>Acción de Configuración Interna</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><b>Number of Threads (Users)</b></td>
+                <td>Cantidad de usuarios virtuales simultáneos que van a interactuar con el sistema.</td>
+            </tr>
+            <tr>
+                <td><b>Ramp-Up Period (seconds)</b></td>
+                <td>El tiempo total en segundos que tardará JMeter en encender e incorporar progresivamente la totalidad
+                    de los hilos configurados.</td>
+            </tr>
+            <tr>
+                <td><b>Loop Count</b></td>
+                <td>Número de repeticiones o iteraciones que cada hilo ejecutará de forma secuencial antes de apagarse.
+                </td>
+            </tr>
+            <tr>
+                <td><b>Duration (seconds)</b></td>
+                <td>Tiempo fijo máximo de ejecución de la prueba en segundos, anulando el ciclo del Loop Count si este
+                    se encuentra infinito.</td>
+            </tr>
+            <tr>
+                <td><b>Startup Delay (seconds)</b></td>
+                <td>Tiempo muerto de espera que aguarda el script antes de lanzar el primer hilo inyector.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2 id="ejemplos-escenarios">6. Diseño Práctico de Escenarios de Inyección de Carga</h2>
+
+    <h3>Escenario A: Curva de Carga Suave (Validación Inicial)</h3>
+    <ul>
+        <li><b>Threads:</b> 20 | <b>Ramp-Up:</b> 20 segundos | <b>Loop Count:</b> 2</li>
+        <li><i>Interpretación Técnica:</i> El sistema incorpora exactamente 1 usuario virtual por segundo de forma
+            escalonada, sirviendo para verificar que los scripts no contengan fallos lógicos de sesión.</li>
+    </ul>
+
+    <h3>Escenario B: Carga Media Estable (Línea Base)</h3>
+    <ul>
+        <li><b>Threads:</b> 50 | <b>Ramp-Up:</b> 50 segundos | <b>Loop Count:</b> 2</li>
+        <li><i>Interpretación Técnica:</i> Modela un comportamiento transaccional estándar y predecible de producción de
+            mediana intensidad.</li>
+    </ul>
+
+    <h3>Escenario C: Fase de Pre-Estrés del Servidor</h3>
+    <ul>
+        <li><b>Threads:</b> 80 | <b>Ramp-Up:</b> 60 segundos | <b>Loop Count:</b> 2</li>
+        <li><i>Interpretación Técnica:</i> Incrementa la presión sobre los procesadores de la base de datos acelerando
+            el Ramp-Up, útil para detectar degradación inicial en los tiempos de respuesta.</li>
+    </ul>
+
+    <h3>Escenario D: Carga Alta Realista con Temporizadores Variables</h3>
+    <ul>
+        <li><b>Threads:</b> 100 | <b>Ramp-Up:</b> 60 segundos | <b>Loop Count:</b> 2</li>
+        <li><i>Interpretación Técnica:</i> Inyección intensa de tráfico. Para aproximar el escenario al comportamiento
+            real, se aconseja acoplar componentes de retardo variable (<b>Timers</b>) entre peticiones, emulando el
+            tiempo de lectura que toma un humano real (<i>Think Time</i>) antes de interactuar en la web.</li>
+    </ul>
+
+    <h2 id="analisis-casos">7. Caso de Estudio Analítico: Interpretación de Resultados</h2>
+    <p><b>Contexto del Reporte de Auditoría Extraído:</b> Tras inyectar una carga sostenida de 50 usuarios concurrentes,
+        se obtienen las siguientes métricas analíticas consolidadas:</p>
+    <ul>
+        <li><b>Tiempo de Respuesta Promedio:</b> 2300 ms (2.3 segundos) ➔ <i>Valor elevado que impacta negativamente la
+                experiencia del usuario.</i></li>
+        <li><b>Desviación Estándar:</b> 900 ms ➔ <i>Confirmación métrica de inestabilidad y falta de consistencia en las
+                respuestas del servidor.</i></li>
+        <li><b>Throughput:</b> 55 req/s ➔ <i>Volumen de procesamiento adecuado pero con clara tendencia a la degradación
+                a medida que aumenta la concurrencia.</i></li>
+    </ul>
+    <p><b>Conclusión de Ingeniería:</b> El backend cumple con los requisitos de disponibilidad básicos y no arroja tasas
+        de error HTTP, pero carece de robustez estructural en términos de rendimiento. Se aconseja implementar
+        estrategias de almacenamiento en caché (Caching) u optimizar los índices de las consultas SQL complejas para
+        reducir la latencia de procesamiento.</p>
+
+</body>
+
+</html>

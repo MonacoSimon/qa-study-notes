@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.25;
+            color: #333333;
+        }
+
+        h1 {
+            color: #1a365d;
+            border-bottom: 2px solid #2b6cb0;
+            padding-bottom: 8px;
+            margin-top: 24px;
+            margin-bottom: 16px;
+        }
+
+        h2 {
+            color: #2b6cb0;
+            margin-top: 20px;
+            margin-bottom: 12px;
+        }
+
+        h3 {
+            color: #4a5568;
+            margin-top: 16px;
+            margin-bottom: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+            margin-bottom: 16px;
+        }
+
+        th {
+            background-color: #f7fafc;
+            color: #2d3748;
+            font-weight: bold;
+            border: 1px solid #e2e8f0;
+            padding: 10px;
+            text-align: left;
+        }
+
+        td {
+            border: 1px solid #e2e8f0;
+            padding: 10px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+
+        pre {
+            background-color: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            padding: 12px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            margin-top: 8px;
+            margin-bottom: 16px;
+        }
+
+        ul,
+        ol {
+            margin-top: 8px;
+            margin-bottom: 16px;
+            padding-left: 24px;
+        }
+
+        li {
+            margin-bottom: 6px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Curso de Jira: Gestión de Proyectos y Reporte de Bugs en Metodologías Ágiles</h1>
+
+    <h2>Índice General</h2>
+    <ol>
+        <li><a href="#introduccion-jira">Introducción y Funcionalidades Principales de Jira</a></li>
+        <li><a href="#jerarquia-tickets">Jerarquía de Artefactos (Tickets y Tarjetas)</a></li>
+        <li><a href="#anatomia-bug">Anatomía Profesional de un Reporte de Bug</a></li>
+    </ol>
+
+    <div style="margin-bottom: 24px;"></div>
+
+    <h2 id="introduccion-jira">1. Introducción y Funcionalidades Principales de Jira</h2>
+    <p><b>Jira Software</b> es la plataforma corporativa estándar desarrollada por Atlassian para la gestión de
+        proyectos, seguimiento de incidencias y planeación de flujos de trabajo basados en metodologías ágiles (Scrum y
+        Kanban). Sus principales casos de uso incluyen:</p>
+    <ul>
+        <li><b>Gestión Integral de Tareas:</b> Centraliza el flujo de trabajo del equipo de desarrollo de punta a punta.
+        </li>
+        <li><b>Seguimiento de Errores (Bug Tracking):</b> Registro, priorización y control del ciclo de vida de las
+            incidencias técnicas descubiertas.</li>
+        <li><b>Planificación Ágil:</b> Administración de la pila de producto (Backlog), estimación de esfuerzo en puntos
+            de historia (Story Points) y orquestación de iteraciones (Sprints).</li>
+        <li><b>Colaboración Transparente:</b> Visibilidad absoluta sobre el estado, responsables y bloqueos de las
+            actividades del proyecto en tiempo real.</li>
+    </ul>
+
+    <h2 id="jerarquia-tickets">2. Jerarquía de Artefactos (Tickets y Tarjetas)</h2>
+    <p>La información en Jira se estructura mediante componentes atómicos denominados tickets incidencias, ordenados
+        bajo una estricta jerarquía de negocio:</p>
+    <ul>
+        <li><b>Épica (Epic):</b> Bloque de trabajo macro de gran envergadura que engloba un módulo completo de la
+            aplicación (ej. <i>"Implementar Pasarela de Pagos Global"</i>). No se puede resolver en un único sprint y
+            debe subdividirse en tareas menores.</li>
+        <li><b>Historia de Usuario (User Story):</b> Requerimiento de software redactado desde la perspectiva del
+            usuario final para aportar valor inmediato (ej. <i>"Como cliente, quiero pagar con tarjeta de crédito para
+                procesar mi compra rápidamente"</i>).</li>
+        <li><b>Tarea (Task):</b> Trabajo técnico operativo necesario para el equipo de desarrollo o diseño (ej.
+            <i>"Configurar SSL en servidores de staging"</i>).</li>
+        <li><b>Subtarea (Sub-task):</b> División mínima de una historia o tarea asignada a un operador para un control
+            granular diario (ej. <i>"Diseñar interfaz del input de código CVV"</i>).</li>
+        <li><b>Bug / Error:</b> Registro formal de un fallo detectado en el sistema que desvía el producto de los
+            criterios de aceptación originales.</li>
+    </ul>
+
+    <h2 id="anatomia-bug">3. Anatomía Profesional de un Reporte de Bug</h2>
+    <p>Para asegurar que un programador comprenda y repare una anomalía rápidamente, el ingeniero de pruebas debe
+        redactar el ticket en Jira con el máximo nivel de rigor técnico y claridad:</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Campo en Jira</th>
+                <th>Contenido Técnico Requerido</th>
+                <th>Ejemplo de Redacción Profesional</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><b>Título (Summary)</b></td>
+                <td>Descripción corta, concisa y unívoca del fallo indicando: Qué pasa, Dónde pasa y Bajo qué condición
+                    ocurre.</td>
+                <td><code>[Login] - Botón de ingreso no se habilita tras rellenar campos obligatorios válidos en entorno Mobile.</code>
+                </td>
+            </tr>
+            <tr>
+                <td><b>Descripción</b></td>
+                <td>Contextualización narrativa profunda junto a los <b>Pasos para Reproducir</b> el error de manera
+                    inequívoca.</td>
+                <td>
+                    1. Navegar a la URL de login.<br>
+                    2. Ingresar usuario 'test@qa.com'.<br>
+                    3. Escribir contraseña válida.<br>
+                    4. Observar estado del componente del botón.
+                </td>
+            </tr>
+            <tr>
+                <td><b>Resultado Esperado</b></td>
+                <td>Comportamiento correcto que debería exhibir la aplicación de acuerdo a las especificaciones de
+                    diseño o negocio.</td>
+                <td>El botón de ingreso debe cambiar su estado a activo y con color azul editable tras validar los
+                    formatos de entrada.</td>
+            </tr>
+            <tr>
+                <td><b>Resultado Obtenido</b></td>
+                <td>Falla real observada y documentada en la ejecución.</td>
+                <td>El botón permanece bloqueado (disabled) impidiendo el acceso al panel principal.</td>
+            </tr>
+            <tr>
+                <td><b>Severidad / Prioridad</b></td>
+                <td>Impacto del error en el negocio y urgencia de asignación para desarrollo.</td>
+                <td><b>Severidad:</b> Alta (Bloquea flujo principal) | <b>Prioridad:</b> Alta (Requiere fix en sprint
+                    actual).</td>
+            </tr>
+            <tr>
+                <td><b>Evidencias (Attachments)</b></td>
+                <td>Pruebas gráficas o técnicas irrefutables del fallo observado.</td>
+                <td>Capturas de pantalla con recuadros rojos, videos en formato MP4 o volcados de logs de la consola de
+                    desarrollo del navegador.</td>
+            </tr>
+            <tr>
+                <td><b>Entorno (Environment)</b></td>
+                <td>Especificación del ecosistema tecnológico donde se detectó el bug.</td>
+                <td><b>OS:</b> Android 14 | <b>Navegador:</b> Chrome Mobile v124 | <b>Ambiente:</b> Staging-02.</td>
+            </tr>
+        </tbody>
+    </table>
+
+</body>
+
+</html>

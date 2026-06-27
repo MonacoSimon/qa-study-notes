@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.25;
+            color: #333333;
+        }
+
+        h1 {
+            color: #1a365d;
+            border-bottom: 2px solid #2b6cb0;
+            padding-bottom: 8px;
+            margin-top: 24px;
+            margin-bottom: 16px;
+        }
+
+        h2 {
+            color: #2b6cb0;
+            margin-top: 20px;
+            margin-bottom: 12px;
+        }
+
+        h3 {
+            color: #4a5568;
+            margin-top: 16px;
+            margin-bottom: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+            margin-bottom: 16px;
+        }
+
+        th {
+            background-color: #f7fafc;
+            color: #2d3748;
+            font-weight: bold;
+            border: 1px solid #e2e8f0;
+            padding: 10px;
+            text-align: left;
+        }
+
+        td {
+            border: 1px solid #e2e8f0;
+            padding: 10px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+
+        pre {
+            background-color: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            padding: 12px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            margin-top: 8px;
+            margin-bottom: 16px;
+        }
+
+        ul,
+        ol {
+            margin-top: 8px;
+            margin-bottom: 16px;
+            padding-left: 24px;
+        }
+
+        li {
+            margin-bottom: 6px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Curso de OWASP ZAP: Seguridad y Pruebas de Penetración (Pentesting)</h1>
+
+    <h2>Índice General</h2>
+    <ol>
+        <li><a href="#introduccion">Introducción a OWASP y Seguridad en Software</a></li>
+        <li><a href="#herramientas-estaticas">Herramientas Estáticas Auxiliares (SAST)</a></li>
+        <li><a href="#owasp-zap">OWASP ZAP como Proxy Interceptor</a></li>
+        <li><a href="#certificados">Instalación del Certificado Raíz de Seguridad</a></li>
+        <li><a href="#modos-ejecucion">Modos de Ejecución en ZAP</a></li>
+        <li><a href="#scope-contexto">Definición del Alcance (Scope) y Contextos</a></li>
+        <li><a href="#fuzzing">Técnicas de Fuzzing (Inyección de Datos Maliciosos)</a></li>
+        <li><a href="#escaneo-autenticado">Escaneos Autenticados y Gestión de Sesión</a></li>
+        <li><a href="#automatizacion-cicd">Automatización y canalizaciones CI/CD</a></li>
+    </ol>
+
+    <div style="margin-bottom: 24px;"></div>
+
+    <h2 id="introduccion">1. Introducción a OWASP y Seguridad en Software</h2>
+    <p><b>OWASP</b> (<i>Open Worldwide Application Security Project</i>) es una fundación sin fines de lucro y una
+        comunidad global dedicada a mejorar la seguridad del software. Su proyecto más célebre, el <b>OWASP Top 10</b>,
+        documenta periódicamente las diez vulnerabilidades web más críticas del mundo, sirviendo como estándar de
+        auditoría global.</p>
+
+    <h2 id="herramientas-estaticas">2. Herramientas Estáticas Auxiliares (SAST)</h2>
+    <p>Antes de realizar pruebas dinámicas, se suelen emplear analizadores estáticos de código para identificar malas
+        prácticas o contraseñas expuestas en el código fuente.</p>
+
+    <h3>Análisis en Python con Bandit</h3>
+    <p>Bandit encuentra fallos comunes de seguridad en proyectos Python. Para instalarlo y escanear un directorio de
+        forma recursiva, se ejecuta:</p>
+    <pre>
+pip install bandit
+bandit -r .
+</pre>
+
+    <h3>Herramientas Especializadas para Django</h3>
+    <ul>
+        <li><code>django-check</code>: Sistema nativo para comprobar configuraciones del framework.</li>
+        <li><code>django-secure</code>: Valida las directivas críticas de seguridad en producción.</li>
+        <li><code>django-debug-toolbar</code>: Herramientas en interfaz gráfica para auditar peticiones y consultas SQL
+            en desarrollo (¡nunca debe activarse en producción!).</li>
+    </ul>
+
+    <h2 id="owasp-zap">3. OWASP ZAP como Proxy Interceptor</h2>
+    <p><b>OWASP ZAP</b> (<i>Zed Attack Proxy</i>) es una herramienta de código abierto para pruebas de seguridad
+        dinámica (DAST). Funciona como un <b>Proxy Interceptor</b> situado entre el navegador web del auditor y el
+        servidor de la aplicación.</p>
+
+
+
+    <h3>Configuración de Red Local</h3>
+    <p>Para comprobar que ZAP escucha correctamente el tráfico de la máquina anfitriona, se debe validar en el menú
+        superior:</p>
+    <pre>Tools -> Options -> Network (o Red) -> Local Servers/Proxies</pre>
+    <p>La dirección IP predeterminada debe apuntar a <code>localhost</code> (o <code>127.0.0.1</code>) en el puerto
+        <code>8080</code>.</p>
+
+    <h2 id="certificados">4. Instalación del Certificado Raíz de Seguridad</h2>
+    <p>Dado que la mayoría de los sitios web modernos viajan cifrados bajo HTTPS, ZAP necesita un certificado SSL/TLS
+        intermedio para descifrar, inspeccionar y volver a cifrar los paquetes de datos sin que el navegador bloquee la
+        conexión.</p>
+
+    <h3>Procedimiento de Configuración Paso a Paso</h3>
+    <ol>
+        <li><b>Generar el certificado en ZAP:</b> Dirígete a <code>Tools -> Options -> Dynamic SSL Certificates</code>.
+            Haz clic en <i>Generate</i> e importa o guarda el archivo con extensión <code>.cer</code> o
+            <code>.crt</code> en tu equipo.</li>
+        <li><b>Configurar el navegador:</b> Cambia los ajustes de red del navegador para que redirija el tráfico
+            HTTP/HTTPS a través del proxy manual <code>localhost</code> puerto <code>8080</code>.</li>
+        <li><b>Importar Autoridad de Certificación:</b> En la sección de privacidad y seguridad del navegador, busca el
+            apartado de certificados, selecciona <i>Importar</i> y elige el archivo generado por ZAP. Asegúrate de
+            marcar la casilla <i>"Confiar en esta CA para identificar sitios web"</i>.</li>
+        <li><b>Activar la Intercepción:</b> Asegúrate de que el botón circular del panel superior de ZAP cambie a color
+            <b>rojo</b> (indica que el tráfico se interceptará y pausará para su inspección). El color verde permite el
+            flujo libre de datos.</li>
+    </ol>
+
+    <h2 id="modos-ejecucion">5. Modos de Ejecución en ZAP</h2>
+    <p>ZAP dispone de cuatro modalidades de operación que restringen la agresividad de las herramientas en función del
+        entorno:</p>
+    <ul>
+        <li><b>Modo Seguro (Safe Mode):</b> Desactiva todas las funciones dañinas o de modificación de datos. Solo
+            inspecciona peticiones pasivas sin alterar el comportamiento de la app. Es completamente inocuo.</li>
+        <li><b>Modo Protegido (Protected Mode):</b> Permite lanzar ataques maliciosos o de inyección de código
+            únicamente contra las URLs o dominios que el auditor haya incluido explícitamente dentro del alcance
+            (<i>Scope</i>). Evita atacar dominios externos por accidente.</li>
+        <li><b>Modo Estándar (Standard Mode):</b> Modo por defecto. Permite interactuar y realizar escaneos comunes de
+            forma interactiva.</li>
+        <li><b>Modo Ataque (Attack Mode):</b> Escanea de manera activa y agresiva cualquier URL nueva a medida que es
+            descubierta por el rastreador (<i>Spider</i>). Se debe usar con extrema precaución.</li>
+    </ul>
+
+    <h2 id="scope-contexto">6. Definición del Alcance (Scope) y Contextos</h2>
+    <p>El <b>Scope</b> define las fronteras físicas de la auditoría de seguridad para evitar ramificaciones legales por
+        atacar servidores ajenos. Para configurarlo:</p>
+    <pre>Crear un Contexto Nuevo -> Clic derecho sobre la URL raíz en la pestaña 'Sites' -> Incluir en el Contexto</pre>
+    <p>A partir de ese instante, se pueden aplicar filtros para excluir subdirectorios pesados o pasarelas de pago de
+        terceros que no deben auditarse.</p>
+
+    <h2 id="fuzzing">7. Técnicas de Fuzzing (Inyección de Datos Maliciosos)</h2>
+    <p>El <b>Fuzzing</b> consiste en enviar de forma masiva datos de entrada inesperados, aleatorios o maliciosos
+        (cargas útiles o <i>payloads</i>) hacia un parámetro de una petición HTTP (como campos de texto o parámetros
+        URL) para verificar si la aplicación se rompe o expone fallos del sistema.</p>
+
+    <h3>Metodología Operativa de Fuzzing en ZAP</h3>
+    <ol>
+        <li>Crea un archivo de texto estructurado con extensión <code>.txt</code> que contenga un diccionario de ataques
+            (por ejemplo: inyecciones SQL comunes como <code>' OR '1'='1</code> o scripts XSS).</li>
+        <li>Navega en la pestaña <i>Sites</i> de ZAP, localiza la petición específica (por ejemplo, un método
+            <code>POST</code> de inicio de sesión o un <code>GET</code> de búsqueda) y haz clic derecho ->
+            <code>Fuzz...</code>.</li>
+        <li>Selecciona la palabra o variable exacta que deseas comprometer y haz clic en <b>Add</b> para cargar tu
+            archivo de texto.</li>
+        <li><b>Interpretación de Resultados:</b> Evalúa los códigos de estado devueltos por el servidor. Si ante una
+            carga maliciosa el servidor responde con un código <code>200 OK</code> renderizando la base de datos o el
+            script, el sistema es <b>vulnerable</b>. Una aplicación robusta debe atrapar la anomalía devolviendo errores
+            controlados del cliente como <code>400 Bad Request</code>.</li>
+    </ol>
+
+    <h2 id="escaneo-autenticado">8. Escaneos Autenticados y Gestión de Sesión</h2>
+    <p>Muchas vulnerabilidades críticas se esconden detrás de los paneles de acceso restringido. Para que ZAP evalúe
+        estas zonas de forma automática, se debe configurar una sesión autenticada:</p>
+    <ol>
+        <li>Entra a las propiedades del contexto y accede a la sección <b>Authentication</b>.</li>
+        <li>Selecciona la tecnología deseada (por ejemplo, <i>JSON-Based Authentication</i> o formularios basados en
+            peticiones HTTP).</li>
+        <li>Indica la URL de inicio de sesión y mapea las variables donde se inyectan el usuario y el password
+            correspondientes.</li>
+        <li><b>Patrón Regex de Verificación:</b> Define una expresión regular para que ZAP determine si sigue logueado o
+            si la sesión expiró (por ejemplo, buscando la existencia de la palabra <code>logout</code> o tokens de
+            autenticación dentro del cuerpo de la respuesta HTML).</li>
+        <li>Activa el icono con forma de <b>candado</b> en la esquina superior derecha de la interfaz para forzar a ZAP
+            a mantener la sesión de usuario activa de forma permanente durante el escaneo automatizado.</li>
+    </ol>
+
+    <h2 id="automatizacion-cicd">9. Automatización y Canalizaciones CI/CD</h2>
+    <h3>ZAP Automation Framework (AF)</h3>
+    <p>Permite compilar planes de pruebas de seguridad completos dentro de un único archivo de configuración
+        estructurado en formato <b>YAML</b> (<code>zap.yaml</code>), facilitando que el flujo se ejecute mediante
+        consolas de comandos sin interacción humana.</p>
+
+    <h3>ZAP API</h3>
+    <p>ZAP expone una API REST nativa completa que permite manipular cualquier funcionalidad de la herramienta (iniciar
+        escaneos, consultar alertas, exportar reportes) utilizando lenguajes como Python o JavaScript. Por defecto, una
+        vez que ZAP se está ejecutando, se puede acceder a la interfaz interactiva de la API desde el navegador local
+        en:</p>
+    <pre>http://localhost:8080/</pre>
+
+    <h3>Integración en Flujos de Integración Continua (CI/CD)</h3>
+    <p>Al integrarse en orquestadores como Jenkins, GitLab CI o GitHub Actions, ZAP realiza escaneos dinámicos
+        automatizados ante cada nueva confirmación de código (<i>push</i>). Si el análisis detecta vulnerabilidades con
+        severidad alta, se puede configurar para romper el pipeline e impedir el despliegue a producción de código
+        vulnerable.</p>
+
+</body>
+
+</html>

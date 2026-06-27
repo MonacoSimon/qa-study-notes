@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.25;
+            color: #333333;
+        }
+
+        h1 {
+            color: #1a365d;
+            border-bottom: 2px solid #2b6cb0;
+            padding-bottom: 8px;
+            margin-top: 24px;
+            margin-bottom: 16px;
+        }
+
+        h2 {
+            color: #2b6cb0;
+            margin-top: 20px;
+            margin-bottom: 12px;
+        }
+
+        h3 {
+            color: #4a5568;
+            margin-top: 16px;
+            margin-bottom: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+            margin-bottom: 16px;
+        }
+
+        th {
+            background-color: #f7fafc;
+            color: #2d3748;
+            font-weight: bold;
+            border: 1px solid #e2e8f0;
+            padding: 10px;
+            text-align: left;
+        }
+
+        td {
+            border: 1px solid #e2e8f0;
+            padding: 10px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+
+        pre {
+            background-color: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            padding: 12px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            margin-top: 8px;
+            margin-bottom: 16px;
+        }
+
+        ul,
+        ol {
+            margin-top: 8px;
+            margin-bottom: 16px;
+            padding-left: 24px;
+        }
+
+        li {
+            margin-bottom: 6px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Curso de Jenkins: Apuntes Profesionales de CI/CD</h1>
+
+    <h2>Índice General</h2>
+    <ol>
+        <li><a href="#introduccion">Introducción a Jenkins y Conceptos Básicos</a></li>
+        <li><a href="#ci-cd">El Paradigma CI/CD (Integración y Entrega Continua)</a></li>
+        <li><a href="#requisitos">Requisitos de Sistema e Infraestructura</a></li>
+        <li><a href="#instalacion-docker">Instalación y Configuración del Entorno con Docker</a></li>
+        <li><a href="#solucion-errores">Resolución de Problemas Frecuentes (Troubleshooting)</a></li>
+        <li><a href="#pipelines-parametrizados">Pipelines de Jenkins y Ejecución Parametrizada</a></li>
+        <li><a href="#integracion-cypress">Caso Práctico: Integración Completa con Cypress y Docker</a></li>
+    </ol>
+
+    <div style="margin-bottom: 24px;"></div>
+
+    <h2 id="introduccion">1. Introducción a Jenkins y Conceptos Básicos</h2>
+    <p><b>Jenkins</b> es un servidor de automatización de código abierto líder en la industria. Su función principal es
+        facilitar la orquestación de flujos de trabajo automatizados que transforman el código fuente en un producto
+        listo para producción.</p>
+
+    <h3>Responsabilidades Clave de Jenkins</h3>
+    <ul>
+        <li><b>Gestión de la Compilación (Builds):</b> Recopila automáticamente el código fuente desde sistemas de
+            control de versiones y compila los binarios o artefactos necesarios.</li>
+        <li><b>Pruebas Automatizadas:</b> Lanza de manera inmediata suites de pruebas unitarias, de integración,
+            funcionales o estéticas tras cualquier modificación.</li>
+        <li><b>Despliegue Automático (Deployment):</b> Distribuye de forma ágil las nuevas versiones del software a
+            entornos de prueba, <i>staging</i> o producción de manera controlada.</li>
+        <li><b>Monitoreo Continuo:</b> Evalúa la salud y el rendimiento de los procesos a lo largo de todo el ciclo de
+            desarrollo.</li>
+    </ul>
+    <p>Gracias a su ecosistema modular con más de 1800 plugins, es altamente extensible y se conecta nativamente con
+        herramientas críticas como Git, Docker, Kubernetes, AWS, SonarQube, entre otras.</p>
+
+    <h2 id="ci-cd">2. El Paradigma CI/CD (Integración y Entrega Continua)</h2>
+    <p>Para comprender la utilidad de los <b>Pipelines</b> (bloques de código que definen los pasos del ciclo de
+        desarrollo), es vital dominar las diferencias entre CI y CD:</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Concepto</th>
+                <th>Definición Operativa</th>
+                <th>Beneficios Principales</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><b>Integración Continua (CI)</b></td>
+                <td>Práctica de fusionar los cambios de código de los desarrolladores en un repositorio central de forma
+                    frecuente. Cada integración desencadena una compilación y pruebas automatizadas.</td>
+                <td>Detección temprana de errores, reducción de conflictos de mezcla (merge) y feedback inmediato para
+                    el equipo.</td>
+            </tr>
+            <tr>
+                <td><b>Entrega Continua (CD)</b></td>
+                <td>Extensión de la CI que automatiza el despliegue del software en entornos de prueba o producción.
+                    Permite realizar lanzamientos pequeños y frecuentes de forma segura.</td>
+                <td>Reducción del tiempo de salida al mercado (Time-to-Market), entregas predecibles y mejoras
+                    iterativas constantes.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2 id="requisitos">3. Requisitos de Sistema e Infraestructura</h2>
+    <p>Para ejecutar una instancia estable de Jenkins en entornos locales o de servidores dedicados, se deben cumplir
+        los siguientes requerimientos mínimos:</p>
+    <ul>
+        <li><b>Entorno de Ejecución:</b> Java Runtime Environment (JRE) o Java Development Kit (JDK) instalado y
+            configurado correctamente en el sistema de origen.</li>
+        <li><b>Memoria RAM:</b> Mínimo 4 GB recomendados para soportar ejecuciones concurrentes livianas.</li>
+        <li><b>Espacio en Disco:</b> Mínimo 1 GB dedicado a la aplicación, ajustando almacenamiento adicional para el
+            histórico de compilaciones y artefactos.</li>
+        <li><b>Navegadores Compatibles:</b> Google Chrome, Mozilla Firefox, Microsoft Edge, etc.</li>
+        <li><b>Conectividad de Red:</b> Acceso configurado por defecto a través del puerto <code>8080</code>.</li>
+    </ul>
+
+    <h2 id="instalacion-docker">4. Instalación y Configuración del Entorno con Docker</h2>
+    <p>La instalación mediante contenedores Docker garantiza que Jenkins se ejecute en un ambiente controlado e
+        independiente. A continuación se listan los comandos ordenados para preparar el sistema operativo anfitrión
+        (basado en distribuciones Linux/Ubuntu):</p>
+
+    <pre>
+# 1. Actualizar los repositorios locales e índices del sistema
+sudo apt update
+sudo apt upgrade -y
+
+# 2. Instalar paquetes de soporte para la transferencia segura de datos
+sudo apt install apt-transport-https ca-certificates curl software-properties-common -y
+
+# 3. Añadir la llave GPG oficial de Docker para validar la autenticidad de los paquetes
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+
+# 4. Sincronizar nuevamente e instalar Docker Community Edition (CE) junto a su CLI
+sudo apt update
+sudo apt install docker-ce docker-ce-cli containerd.io -y
+
+# 5. Validar la correcta instalación de la plataforma verificando su versión
+docker --version
+
+# 6. Añadir el usuario actual al grupo de Docker para ejecutar comandos sin 'sudo'
+sudo usermod -aG docker $USER
+
+# 7. Aplicar de manera inmediata los cambios de grupo en la sesión actual
+newgrp docker
+</pre>
+
+    <h2 id="solucion-errores">5. Resolución de Problemas Frecuentes (Troubleshooting)</h2>
+    <h3>Error de Conexión al Demonio de Docker</h3>
+    <p>Si al ejecutar un comando de verificación como <code>docker run hello-world</code> se arroja el siguiente error:
+    </p>
+    <pre>Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?</pre>
+    <p><b>Causa:</b> El servicio del motor de Docker no se ha iniciado o se encuentra detenido en el sistema operativo.
+    </p>
+    <p><b>Solución:</b> Inicializar el servicio a través del gestor del sistema ejecutando:</p>
+    <pre>sudo systemctl start docker</pre>
+
+    <h2 id="pipelines-parametrizados">6. Pipelines de Jenkins y Ejecución Parametrizada</h2>
+    <p>Los pipelines paramétricos añaden una capa de flexibilidad que permite al operador seleccionar variables
+        dinámicas antes de iniciar la ejecución de los flujos de trabajo (utilizando la opción <i>Build with
+            Parameters</i> en la interfaz de usuario).</p>
+
+    <h3>Flujo de Trabajo Típico de Ejecución</h3>
+    <pre>
+  [ Jenkins clona el repositorio ] 
+                 ↓
+[ Descarga de la imagen de Docker requerida ]
+                 ↓
+ [ Ejecución interna de las pruebas (Testing) ]
+</pre>
+
+    <h2 id="integracion-cypress">7. Caso Práctico: Integración Completa con Cypress y Docker</h2>
+    <p>Para asegurar que los tests se ejecuten correctamente en Jenkins, el repositorio de código fuente debe contener
+        al menos la siguiente estructura básica:</p>
+    <pre>
+tu-repositorio/
+ ├─ package.json
+ └─ cypress/
+     └─ e2e/
+         └─ acceso-a-index.cy.js
+</pre>
+
+    <h3>Código Completo del Declarative Pipeline</h3>
+    <p>Este archivo de configuración (<code>Jenkinsfile</code>) define los parámetros de entrada (archivo de
+        especificación y navegador) y orquesta las fases del ciclo mediante contenedores Docker aislados:</p>
+
+    <pre>
+pipeline {
+    agent any
+    
+    parameters {
+        string(
+            name: 'SPEC', 
+            defaultValue: 'acceso-a-index.cy.js', 
+            description: 'Especifica el archivo de prueba de Cypress a ejecutar'
+        )
+        choice(
+            name: 'BROWSER', 
+            choices: ['chrome', 'firefox'], 
+            description: 'Selecciona el navegador para ejecutar las pruebas'
+        )
+    }
+    
+    options {
+        // Habilitar salida de colores ANSI en la consola de Jenkins
+        ansiColor('xterm')
+    }
+    
+    stages {
+        stage('Checkout') {
+            steps {
+                // Descarga automática del código fuente desde el SCM configurado
+                checkout scm
+            }
+        }
+        
+        stage('Testing') {
+            steps {
+                echo "Ejecutando pruebas de Cypress en ${params.SPEC} usando el navegador ${params.BROWSER}"
+                script {
+                    // Descarga e inicia la imagen oficial de Cypress anulando el entrypoint por defecto
+                    docker.image('cypress/included:13.7.0').inside('--entrypoint=""') {
+                        sh """
+                        npm install
+                        npx cypress run --spec cypress/e2e/${params.SPEC} --browser ${params.BROWSER}
+                        """
+                    }
+                }
+            }
+        }
+        
+        stage('Deploying') {
+            steps {
+                echo "Desplegando la aplicación en el entorno correspondiente..."
+            }
+        }
+    }
+    
+    post {
+        always {
+            echo "Pipeline finalizado. Limpiando el entorno de ejecución..."
+        }
+    }
+}
+</pre>
+
+</body>
+
+</html>

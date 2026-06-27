@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.25;
+            color: #333333;
+        }
+
+        h1 {
+            color: #1a365d;
+            border-bottom: 2px solid #2b6cb0;
+            padding-bottom: 8px;
+            margin-top: 24px;
+            margin-bottom: 16px;
+        }
+
+        h2 {
+            color: #2b6cb0;
+            margin-top: 20px;
+            margin-bottom: 12px;
+        }
+
+        h3 {
+            color: #4a5568;
+            margin-top: 16px;
+            margin-bottom: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+            margin-bottom: 16px;
+        }
+
+        th {
+            background-color: #f7fafc;
+            color: #2d3748;
+            font-weight: bold;
+            border: 1px solid #e2e8f0;
+            padding: 10px;
+            text-align: left;
+        }
+
+        td {
+            border: 1px solid #e2e8f0;
+            padding: 10px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+
+        pre {
+            background-color: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            padding: 12px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            margin-top: 8px;
+            margin-bottom: 16px;
+        }
+
+        ul,
+        ol {
+            margin-top: 8px;
+            margin-bottom: 16px;
+            padding-left: 24px;
+        }
+
+        li {
+            margin-bottom: 6px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Curso de Postman: Pruebas y Automatización de APIs de Extremo a Extremo</h1>
+
+    <h2>Índice General</h2>
+    <ol>
+        <li><a href="#introduccion-apis">Conceptos Fundamentales de Interfaces de Programación (APIs)</a></li>
+        <li><a href="#arquitecturas">Modelos de Arquitectura: REST, SOAP y GraphQL</a></li>
+        <li><a href="#seguridad-jwt">Autenticación Web mediante JSON Web Tokens (JWT)</a></li>
+        <li><a href="#scripts-postman">Automatización de Aserciones en Postman (Tests Panel)</a></li>
+        <li><a href="#newman-cli">Ejecución en Consola y CI/CD utilizando Newman</a></li>
+    </ol>
+
+    <div style="margin-bottom: 24px;"></div>
+
+    <h2 id="introduccion-apis">1. Conceptos Fundamentales de Interfaces de Programación (APIs)</h2>
+    <p>Una <b>API (Application Programming Interface)</b> es un conjunto de reglas, convenciones y protocolos que
+        permiten que diferentes componentes de software se comuniquen e intercambien datos de manera estructurada sin
+        intervención de una interfaz gráfica de usuario (GUI). Actúa como una capa de abstracción de sistemas complejos.
+    </p>
+    <p><i>Analogía Mecánica:</i> El volante y los pedales de un automóvil representan la interfaz de control. Te
+        permiten conducir e interactuar con el vehículo de forma segura sin necesidad de comprender la mecánica interna
+        o la inyección electrónica del motor que ocurre debajo.</p>
+
+    <h2 id="arquitecturas">2. Modelos de Arquitectura: REST, SOAP y GraphQL</h2>
+    <ul>
+        <li><b>REST (Representational State Transfer):</b> Estilo de arquitectura cliente-servidor sin retención de
+            estado (Stateless), donde cada recurso se identifica unívocamente mediante URLs y se manipula utilizando
+            verbos estandarizados del protocolo HTTP (<code>GET</code> para lectura, <code>POST</code> para creación,
+            <code>PUT</code> para actualización y <code>DELETE</code> para remoción).</li>
+        <li><b>RESTful:</b> Se denomina así a cualquier aplicación web que implementa de forma estricta y nativa los
+            principios teóricos y restricciones de la arquitectura REST.</li>
+        <li><b>SOAP (Simple Object Access Protocol):</b> Protocolo estricto basado en contratos que utiliza
+            exclusivamente el formato XML para el transporte de mensajes seguros, ampliamente implementado en la banca
+            tradicional debido a sus rigurosas políticas de transacciones.</li>
+        <li><b>GraphQL:</b> Lenguaje de consultas moderno para APIs que permite al cliente solicitar de forma exacta los
+            campos de datos que requiere, optimizando el ancho de banda y evitando la sobrecarga de datos
+            (Over-fetching).</li>
+    </ul>
+
+    <h2 id="seguridad-jwt">3. Autenticación Web mediante JSON Web Tokens (JWT)</h2>
+    <p>Para acceder de forma segura a endpoints privados, los sistemas modernos implementan tokens criptográficos
+        estructurados. El formato más extendido en la industria es <b>JWT (JSON Web Token)</b>. Tras un login exitoso,
+        el servidor web despacha un token compacto cifrado que almacena los permisos de sesión del usuario. El cliente
+        debe adjuntar este token en la cabecera de cada petición HTTP subsiguiente para validar su identidad.</p>
+
+    <h2 id="scripts-postman">4. Automatización de Aserciones en Postman (Tests Panel)</h2>
+    <p>Postman incorpora un entorno de ejecución basado en JavaScript (dentro de la pestaña <i>Tests</i>) para
+        automatizar validaciones sobre las respuestas JSON devueltas por los servidores:</p>
+
+    <h3>A. Validación de Código de Estado Exitoso (HTTP 200)</h3>
+    <pre>
+pm.test("Validar que el código de estado sea HTTP 200 OK", function () {
+    pm.response.to.have.status(200);
+});
+</pre>
+
+    <h3>B. Validación y Tipado Estructural de Datos del Perfil de Usuario</h3>
+    <pre>
+pm.test("Verificar la integridad y consistencia de los datos del usuario logueado", function () {
+    const responseJson = pm.response.json();
+    
+    // Comparar variables dinámicas contra variables de entorno
+    pm.expect(responseJson.authentication.umail).to.equal(pm.environment.get("nuevoEmail"));
+    
+    // Validar tipos de datos nativos
+    pm.expect(responseJson.authentication.bid).to.be.a("number");
+    
+    // Validar condiciones lógicas numéricas
+    pm.expect(responseJson.authentication.bid).to.be.greaterThan(0);
+});
+</pre>
+
+    <h2 id="newman-cli">5. Ejecución en Consola y CI/CD utilizando Newman</h2>
+    <p><b>Newman</b> es la interfaz de línea de comandos (CLI) nativa para Postman. Permite ejecutar colecciones de
+        pruebas completas de forma automatizada directamente desde la consola del sistema operativo o integradas dentro
+        de pipelines de CI/CD (Jenkins, GitHub Actions), eliminando la necesidad de abrir la aplicación de Postman en
+        entornos gráficos.</p>
+
+    <h3>A. Preparación del Ecosistema de Consola</h3>
+    <pre>
+# Instalar Newman de forma global en el sistema
+npm install -g newman
+
+# Verificar el éxito de la instalación consultando su versión
+newman -v
+
+# Instalar el generador de reportes visuales en formato HTML
+npm install -g newman-reporter-html
+</pre>
+
+    <h3>B. Estructura de Directorios Profesional de un Proyecto</h3>
+    <pre>
+api-testing-framework/
+ ├─ postman/
+ │   └─ coleccion_pruebas_reqres.json
+ ├─ environment/
+ │   └─ staging_environment.json
+ └─ newman/
+     ├─ html_reports/
+     │   └─ report_ejecucion.html
+     └─ README.md
+</pre>
+
+    <h3>C. Comando Definitivo de Inyección de Pruebas con Reporte</h3>
+    <p>Para disparar las peticiones pasando variables de entorno y anulando URLs dinámicas en caliente, se ejecuta:</p>
+    <pre>
+newman run ./postman/coleccion_pruebas_reqres.json \
+-e ./environment/staging_environment.json \
+--env-var "UrlBase=https://dummyjson.com" \
+--reporters html \
+--reporter-html-export ./newman/html_reports/report_ejecucion.html
+</pre>
+
+    <h3>D. Resumen Ejecutivo de Salida Esperada en Consola</h3>
+    <pre>
+============================================================
+✔ Requests ejecutadas: 19 | Exitosas: 19 | Fallidas: 0
+✔ Aserciones totales:  75 | Exitosas: 75 | Fallidas: 0
+------------------------------------------------------------
+Resultado Final: ✔ Ejecución limpia y exitosa sin regresiones técnicas.
+============================================================
+</pre>
+
+</body>
+
+</html>

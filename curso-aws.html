@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.25;
+            color: #333333;
+        }
+
+        h1 {
+            color: #1a365d;
+            border-bottom: 2px solid #2b6cb0;
+            padding-bottom: 8px;
+            margin-top: 24px;
+            margin-bottom: 16px;
+        }
+
+        h2 {
+            color: #2b6cb0;
+            margin-top: 20px;
+            margin-bottom: 12px;
+        }
+
+        h3 {
+            color: #4a5568;
+            margin-top: 16px;
+            margin-bottom: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+            margin-bottom: 16px;
+        }
+
+        th {
+            background-color: #f7fafc;
+            color: #2d3748;
+            font-weight: bold;
+            border: 1px solid #e2e8f0;
+            padding: 10px;
+            text-align: left;
+        }
+
+        td {
+            border: 1px solid #e2e8f0;
+            padding: 10px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+
+        pre {
+            background-color: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            padding: 12px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            margin-top: 8px;
+            margin-bottom: 16px;
+        }
+
+        ul,
+        ol {
+            margin-top: 8px;
+            margin-bottom: 16px;
+            padding-left: 24px;
+        }
+
+        li {
+            margin-bottom: 6px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>AWS con LocalStack: Pruebas Cloud en Entornos Locales</h1>
+
+    <h2>Índice General</h2>
+    <ol>
+        <li><a href="#introduccion">Introducción a AWS y Pruebas de Resiliencia</a></li>
+        <li><a href="#localstack">¿Qué es LocalStack y por qué utilizarlo?</a></li>
+        <li><a href="#arquitectura-local">Configuración del Entorno Local (Docker Compose)</a></li>
+        <li><a href="#casos-s3">Pruebas en Amazon S3</a></li>
+        <li><a href="#casos-dynamo">Pruebas en Amazon DynamoDB y RDS</a></li>
+        <li><a href="#casos-sqs">Pruebas de Mensajería con SQS y SNS</a></li>
+        <li><a href="#casos-lambda">Arquitecturas Serverless (AWS Lambda)</a></li>
+        <li><a href="#scripts-boto3">Desarrollo de Scripts de Automatización con Boto3</a></li>
+    </ol>
+
+    <div style="margin-bottom: 24px;"></div>
+
+    <h2 id="introduccion">1. Introducción a AWS y Pruebas de Resiliencia</h2>
+    <p><b>Amazon Web Services (AWS)</b> es la plataforma de computación en la nube más robusta del mercado, encargada de
+        proveer almacenamiento, bases de datos y orquestación de mensajería a nivel global. Desarrollar directamente en
+        la nube pública puede resultar costoso e ineficiente durante las fases tempranas del desarrollo. Sin embargo,
+        AWS permite realizar complejas <b>pruebas de resiliencia</b>, simulando caídas del sistema e interrupciones de
+        red para verificar la capacidad de recuperación automática de las aplicaciones.</p>
+
+    <h2 id="localstack">2. ¿Qué es LocalStack y por qué utilizarlo?</h2>
+    <p><b>LocalStack</b> es una herramienta de código abierto que emula los servicios de AWS directamente en tu máquina
+        local. Permite a los desarrolladores y QAs probar integraciones sin necesidad de conectarse a internet,
+        eliminando la latencia de red y evitando cargos económicos imprevistos en las facturas de la nube.</p>
+
+    <h3>Servicios Emulados Clave</h3>
+    <ul>
+        <li><b>Amazon S3:</b> Almacenamiento de objetos y archivos estáticos.</li>
+        <li><b>Amazon DynamoDB:</b> Base de datos NoSQL de baja latencia.</li>
+        <li><b>Amazon SQS / SNS:</b> Gestión de colas de mensajería y sistemas de notificación pub/sub.</li>
+        <li><b>AWS Lambda:</b> Ejecución de código basado en eventos en arquitectura Serverless.</li>
+    </ul>
+
+    <h2 id="arquitectura-local">3. Configuración del Entorno Local (Docker Compose)</h2>
+    <p>Para levantar LocalStack de forma rápida y compartir el entorno de manera idéntica con otros equipos de
+        desarrollo, se utiliza el siguiente archivo estructurado <code>docker-compose.yml</code>:</p>
+
+    <pre>
+version: '3.8'
+
+services:
+  localstack:
+    image: localstack/localstack:latest
+    container_name: aws_localstack_emulation
+    ports:
+      - "4566:4566"            # Puerto universal para todas las APIs de AWS
+      - "4510-4559:4510-4559"  # Puertos externos para funciones internas
+    environment:
+      - SERVICES=s3,dynamodb,sqs,sns,lambda
+      - DEBUG=1
+    volumes:
+      - "./localstack_data:/var/lib/localstack"
+    networks:
+      - network-cloud-local
+
+networks:
+  network-cloud-local:
+    driver: bridge
+</pre>
+
+    <h2 id="casos-s3">4. Pruebas en Amazon S3</h2>
+    <p>En el almacenamiento de objetos S3, la suite de pruebas debe validar el ciclo de vida completo de un archivo
+        dentro de un contenedor o <b>Bucket</b>:</p>
+    <ul>
+        <li><b>Subida (Upload):</b> Confirmar que el archivo se transfiere manteniendo su integridad.</li>
+        <li><b>Descarga (Download):</b> Recuperar el binario y verificar que no sufra corrupciones.</li>
+        <li><b>Eliminación (Delete):</b> Asegurar el borrado completo liberando espacio del contenedor.</li>
+        <li><b>Validación IAM:</b> Verificar que las políticas de accesibilidad (Identity and Access Management)
+            restrinjan de manera correcta los permisos a usuarios no autorizados.</li>
+    </ul>
+
+    <h2 id="casos-dynamo">5. Pruebas en Amazon DynamoDB y RDS</h2>
+    <p>Para evaluar la persistencia de datos en bases de datos relacionales (RDS) o no relacionales (DynamoDB), los
+        ingenieros de calidad automatizan las transacciones básicas de control:</p>
+    <pre>
+  [ Create ] ➔ Insertar registros y validar índices de clave.
+  [ Read ]   ➔ Consultar elementos evaluando la latencia de respuesta.
+  [ Update ] ➔ Modificar atributos asegurando la consistencia del dato.
+  [ Delete ] ➔ Remover registros comprobando que no afecte la integridad referencial.
+</pre>
+
+    <h2 id="casos-sqs">6. Pruebas de Mensajería con SQS y SNS</h2>
+    <p>El desacoplamiento de microservicios se audita inyectando mensajes en las colas de <b>Amazon SQS (Simple Queue
+            Service)</b> y canales de <b>SNS (Simple Notification Service)</b>. Las pruebas aseguran que las
+        transmisiones de datos asíncronas no sufran pérdidas de paquetes, respeten el orden de llegada en colas de tipo
+        FIFO y toleren picos extremos de tráfico de datos.</p>
+
+    <h2 id="casos-lambda">7. Arquitecturas Serverless (AWS Lambda)</h2>
+    <p><b>AWS Lambda</b> ejecuta porciones de código bajo demanda sin necesidad de administrar o aprovisionar servidores
+        físicos.</p>
+
+
+
+    <h3>Flujo de Operación Basado en Eventos</h3>
+    <pre>
+Desencadenador (Evento S3 / API Gateway) ➔ Invocación de Lambda ➔ Ejecución de Lógica de Negocio ➔ Respuesta/Salida
+</pre>
+
+    <h2 id="scripts-boto3">8. Desarrollo de Scripts de Automatización con Boto3</h2>
+    <p><b>Boto3</b> es el SDK oficial de AWS para Python. Permite crear, configurar y gestionar servicios
+        programáticamente. A continuación, se detallan ejemplos listos para producción:</p>
+
+    <h3>A. Envío de Mensaje SQS Simple</h3>
+    <pre>
+import boto3
+
+# Instanciar el recurso apuntando al endpoint de LocalStack
+sqs = boto3.resource('sqs', endpoint_url='http://localhost:4566', region_name='us-east-1')
+
+# Obtener la cola preconfigurada
+queue = sqs.get_queue_by_name(QueueName='test')
+
+# Despachar el mensaje
+response = queue.send_message(MessageBody='world')
+
+print("ID del Mensaje Enviado:", response.get('MessageId'))
+print("Suma de Verificación MD5:", response.get('MD5OfMessageBody'))
+</pre>
+
+    <h3>B. Envío de Mensajes con Atributos Especiales</h3>
+    <pre>
+queue.send_message(
+    MessageBody='boto3_custom_payload',
+    MessageAttributes={
+        'Author': {
+            'StringValue': 'Daniel',
+            'DataType': 'String'
+        }
+    }
+)
+</pre>
+
+    <h3>C. Envío de Mensajes en Lote (Batch Mode)</h3>
+    <pre>
+response = queue.send_messages(Entries=[
+    {
+        'Id': '1',
+        'MessageBody': 'primer_mensaje_lote'
+    },
+    {
+        'Id': '2',
+        'MessageBody': 'segundo_mensaje_lote',
+        'MessageAttributes': {
+            'Author': {'StringValue': 'Daniel', 'DataType': 'String'}
+        }
+    }
+])
+
+if response.get('Failed'):
+    print("Mensajes fallidos en el lote:", response.get('Failed'))
+</pre>
+
+    <h3>D. Procesamiento y Consumo de Mensajes en un Worker</h3>
+    <pre>
+import boto3
+
+sqs = boto3.resource('sqs', endpoint_url='http://localhost:4566', region_name='us-east-1')
+queue = sqs.get_queue_by_name(QueueName='test')
+
+# Polling de mensajes activos en la cola
+for message in queue.receive_messages(MessageAttributeNames=['Author']):
+    author_text = ''
+    if message.message_attributes is not None:
+        author_meta = message.message_attributes.get('Author')
+        if author_meta:
+            author_text = author_meta.get('StringValue')
+            
+    print(f"Cuerpo del Mensaje: {message.body} | Autor: {author_text}")
+    
+    # IMPORTANTE: Confirmar al servicio la remoción del mensaje tras procesarlo de forma exitosa
+    message.delete()
+</pre>
+
+</body>
+
+</html>

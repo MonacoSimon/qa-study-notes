@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.25;
+            color: #333333;
+        }
+
+        h1 {
+            color: #1a365d;
+            border-bottom: 2px solid #2b6cb0;
+            padding-bottom: 8px;
+            margin-top: 24px;
+            margin-bottom: 16px;
+        }
+
+        h2 {
+            color: #2b6cb0;
+            margin-top: 20px;
+            margin-bottom: 12px;
+        }
+
+        h3 {
+            color: #4a5568;
+            margin-top: 16px;
+            margin-bottom: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+            margin-bottom: 16px;
+        }
+
+        th {
+            background-color: #f7fafc;
+            color: #2d3748;
+            font-weight: bold;
+            border: 1px solid #e2e8f0;
+            padding: 10px;
+            text-align: left;
+        }
+
+        td {
+            border: 1px solid #e2e8f0;
+            padding: 10px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+
+        pre {
+            background-color: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            padding: 12px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            margin-top: 8px;
+            margin-bottom: 16px;
+        }
+
+        ul,
+        ol {
+            margin-top: 8px;
+            margin-bottom: 16px;
+            padding-left: 24px;
+        }
+
+        li {
+            margin-bottom: 6px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Curso Completo de Cypress: Automatización E2E Profesional</h1>
+
+    <h2>Índice General</h2>
+    <ol>
+        <li><a href="#introduccion">Introducción y Características Principales</a></li>
+        <li><a href="#instalacion-configuracion">Instalación y Configuración del Entorno</a></li>
+        <li><a href="#estructura-basica">Estructura Básica de una Prueba</a></li>
+        <li><a href="#interaccion-elementos">Interacción con Elementos y Selectores</a></li>
+        <li><a href="#control-tiempo-recarga">Control de Tiempo y Gestión de Ventanas</a></li>
+        <li><a href="#data-driven-testing">Pruebas Basadas en Datos (Fixtures)</a></li>
+        <li><a href="#pruebas-api">Pruebas de APIs (HTTP Requests)</a></li>
+        <li><a href="#buenas-practicas">Buenas Prácticas y Configuración Avanzada</a></li>
+        <li><a href="#pruebas-accesibilidad">Pruebas de Accesibilidad Web (A11y)</a></li>
+        <li><a href="#alertas-descuentos">Validación de Alertas y Flujos Dinámicos</a></li>
+        <li><a href="#dockerizacion">Dockerización de Pruebas en Cypress</a></li>
+    </ol>
+
+    <div style="margin-bottom: 24px;"></div>
+
+    <h2 id="introduccion">1. Introducción y Características Principales</h2>
+    <p><b>Cypress</b> es un framework de automatización de pruebas de última generación diseñado específicamente para la
+        web moderna[cite: 2]. A diferencia de otras herramientas, Cypress se ejecuta directamente dentro del mismo ciclo
+        de bucle de eventos que la aplicación (capa de interfaz de usuario)[cite: 2], lo que proporciona ejecuciones
+        nativas extremadamente veloces y reduce la inestabilidad en los resultados.</p>
+
+    <h3>Ventajas Técnicas</h3>
+    <ul>
+        <li><b>Simulación Real:</b> Las pruebas replican con precisión milimétrica la interacción de un usuario real con
+            la interfaz gráfica[cite: 2, 24].</li>
+        <li><b>Pruebas de Extremo a Extremo (E2E):</b> Valida flujos completos de negocio de principio a fin del
+            software[cite: 24].</li>
+        <li><b>Ejecución Paralela:</b> Permite distribuir la suite de pruebas en múltiples hilos de procesamiento para
+            acelerar los tiempos de CI/CD[cite: 3].</li>
+        <li><b>Integración Nativa:</b> Se acopla de manera transparente con sistemas de control de versiones como
+            Git[cite: 4].</li>
+        <li><b>Soporte Multi-Navegador:</b> Ejecución fluida en Google Chrome, Mozilla Firefox y Microsoft Edge[cite:
+            22].</li>
+    </ul>
+
+    <h2 id="instalacion-configuracion">2. Instalación y Configuración del Entorno</h2>
+    <p>Para inicializar un proyecto con Cypress, sigue la secuencia de comandos en tu terminal de desarrollo[cite: 5]:
+    </p>
+
+    <pre>
+# 1. Asegúrate de contar con Node.js instalado globalmente [cite: 6]
+node -v
+
+# 2. Inicializa el gestor de paquetes de Node dentro del directorio de tu proyecto [cite: 7]
+npm init -y
+
+# 3. Instala Cypress como una dependencia de desarrollo [cite: 8]
+npm install cypress --save-dev
+
+# 4. Abre la interfaz gráfica interactiva de Cypress por primera vez [cite: 9]
+npm run cypress:open
+</pre>
+
+    <h3>Resolución del Error de Script Ausente (Missing Script)</h3>
+    <p>Si al ejecutar el comando de apertura del entorno del test runner el sistema arroja el siguiente error[cite: 11,
+        12]:</p>
+    <pre>npm error Missing script: "cypress:open"</pre>
+    <p><b>Solución:</b> Abre el archivo estructural <code>package.json</code> de la raíz y edita el objeto de comandos
+        incluyendo el alias correspondiente[cite: 17]:</p>
+    <pre>
+"scripts": {
+  "test": "echo \"Error: no test specified\" && exit 1",
+  "cypress:open": "cypress open"
+}
+</pre>
+
+    <h2 id="estructura-basica">3. Estructura Básica de una Prueba</h2>
+    <p>Los archivos de pruebas de Cypress utilizan la extensión estándar <code>*.cy.js</code> [cite: 10] y deben ser
+        ubicados bajo el directorio de trabajo <code>cypress/e2e/</code>[cite: 25]. Su estructura hereda la sintaxis de
+        las librerías Mocha y Chai mediante las palabras reservadas <code>describe</code> (para definir suites) e
+        <code>it</code> (para pruebas individuales)[cite: 26, 42].</p>
+
+    <h3>Ejemplo Base: Validación de Apertura</h3>
+    <pre>
+describe('Suite: Pruebas de Apertura Web', () => {
+  it('Debería navegar correctamente a la página de inicio y validar su título', () => {
+    // Visita la URL especificada [cite: 27, 32]
+    cy.visit('https://www.google.com/');
+    
+    // Asertar que el título sea coincidente de forma exacta [cite: 28, 33]
+    cy.title().should('eq', 'Google');
+  });
+});
+</pre>
+    <p><i>Tip: Puedes definir una propiedad <code>baseUrl</code> global en el archivo <code>cypress.config.js</code>
+            para simplificar el uso de <code>cy.visit()</code> en tus archivos[cite: 23].</i></p>
+
+    <h2 id="interaccion-elementos">4. Interacción con Elementos y Selectores</h2>
+    <p>Cypress proporciona el comando universal <code>cy.get()</code> para capturar nodos del árbol de documentos
+        (DOM)[cite: 47]. Como estándar profesional, se aconseja priorizar los atributos exclusivos de pruebas (como IDs
+        o selectores personalizados) antes que clases de diseño que cambien con regularidad[cite: 45].</p>
+
+    <ul>
+        <li><b>Selección por ID:</b> Se antepone el símbolo de almohadilla (<code>#</code>)[cite: 47].</li>
+        <li><b>Selección por Clase CSS:</b> Se antepone un punto (<code>.</code>)[cite: 47].</li>
+    </ul>
+
+    <h3>Comandos de Acción Comunes</h3>
+    <ul>
+        <li><code>.type()</code>: Inyecta texto o cadenas de caracteres dentro de un campo de entrada[cite: 38, 48].
+        </li>
+        <li><code>.click()</code>: Acciona el evento de clic del ratón sobre el botón o elemento seleccionado[cite: 41,
+            53].</li>
+    </ul>
+
+    <h3>Ejemplo de Automatización Completa (Flujo Wikipedia)</h3>
+    <pre>
+describe('Suite: Interacción con el Buscador', () => {
+  it('Debería realizar una búsqueda interactiva en Wikipedia', () => {
+    cy.visit('https://es.wikipedia.org/wiki/Wikipedia:Portada'); [cite: 51]
+    
+    // Validar que la URL incluye el término esperado [cite: 44, 52]
+    cy.url().should('include', 'wikipedia');
+    
+    // Interactuar con los elementos del DOM [cite: 53, 54, 55]
+    cy.get('#p-search > .cdx-button--fake-button > .vector-icon').click();
+    cy.get('#searchform > .cdx-search-input > [name="search"]').type('cypress');
+    cy.get('#searchform > .cdx-search-input > .cdx-button').click();
+    
+    // Alternativa semántica para buscar botones por su texto visible [cite: 58, 59]
+    // cy.contains('button', 'Buscar').click();
+
+    // Aserción de existencia del bloque de contenido [cite: 61]
+    cy.get('.mw-html-heading:contains("Portales")').should('exist');
+  });
+});
+</pre>
+
+    <h2 id="control-tiempo-recarga">5. Control de Tiempo y Gestión de Ventanas</h2>
+    <p>A pesar de que Cypress maneja colas de espera inteligentes automáticas, en ocasiones se requieren instrucciones
+        explícitas de sincronización o de control de ventanas del navegador:</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Función / Comando</th>
+                <th>Descripción Técnica</th>
+                <th>Ejemplo Práctico</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>cy.wait()</code></td>
+                <td>Detiene la ejecución del flujo por un tiempo fijo en milisegundos[cite: 63]. <i>(Usar con
+                        moderación)</i></td>
+                <td><code>cy.wait(1000); // Espera 1 segundo [cite: 64]</code></td>
+            </tr>
+            <tr>
+                <td><code>cy.reload()</code></td>
+                <td>Fuerza la recarga de la página actual en pantalla limpiando estados locales[cite: 65, 66].</td>
+                <td><code>cy.reload();</code></td>
+            </tr>
+            <tr>
+                <td><code>cy.exec()</code></td>
+                <td>Ejecuta un comando nativo a nivel del sistema operativo anfitrión[cite: 67].</td>
+                <td><code>cy.exec('echo "Test running"');</code></td>
+            </tr>
+            <tr>
+                <td><code>{ force: true }</code></td>
+                <td>Fuerza una acción o navegación ignorando si el elemento está oculto o bloqueado[cite: 99].</td>
+                <td><code>cy.visit('https://url-edicion', { force: true }); [cite: 99]</code></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>Control del Objeto Window</h3>
+    <p>Si se requiere interactuar con el contexto global o forzar la redirección de enlaces diseñados para abrirse en
+        pestañas nuevas, se puede capturar el objeto de la ventana gráfica directamente[cite: 101]:</p>
+    <pre>
+cy.window().then((win) => {
+  win.open('https://es.wikipedia.org/w/index.php?title=Wikipedia:Portada&action=edit'); [cite: 102]
+});
+</pre>
+
+    <h2 id="data-driven-testing">6. Pruebas Basadas en Datos (Fixtures)</h2>
+    <p>Los <b>Fixtures</b> son archivos JSON estáticos que contienen sets de datos estructurados independientes del
+        código de pruebas[cite: 71]. Se gestionan dentro del directorio por defecto <code>cypress/fixtures/</code>[cite:
+        73].</p>
+
+    <h3>1. Archivo de Datos (cypress/fixtures/usuarios.json) [cite: 73]</h3>
+    <pre>
+[
+  {
+    "nombre": "admin@gmail.com",
+    "password": "juan123"
+  },
+  {
+    "nombre": "user@gmail.com",
+    "password": "user123"
+  }
+]
+</pre>
+
+    <h3>2. Consumo en la Suite de Pruebas [cite: 86]</h3>
+    <pre>
+describe('Suite: Autenticación con Datos Externos', () => {
+  beforeEach(() => {
+    cy.visit("https://es.wikipedia.org/wiki/Especial:Entrar"); [cite: 88]
+  });
+
+  it('Debería cargar y rellenar las credenciales del primer registro', () => {
+    // Carga el fixture y resuelve la promesa de datos [cite: 91]
+    cy.fixture('usuarios.json').then((datos) => {
+      const usuario = datos[0]; [cite: 92]
+      cy.get('#wpName1').type(usuario.nombre); [cite: 93]
+      cy.get('#wpPassword1').type(usuario.password);
+    });
+  });
+});
+</pre>
+
+    <h2 id="pruebas-api">7. Pruebas de APIs (HTTP Requests)</h2>
+    <p>Cypress no se limita a la interfaz gráfica; también puede actuar como cliente HTTP mediante el comando
+        <code>cy.request()</code> para realizar llamadas directas a extremos (Endpoints) de API REST[cite: 109, 111,
+        114].</p>
+
+    <h3>Ejemplo Avanzado: Consultas GET y Altas POST</h3>
+    <pre>
+describe('Suite: Pruebas de Integración de API', () => {
+
+  it('Debería validar un método GET correctamente', () => {
+    cy.request('GET', "https://reqres.in/api/users?page=2").then((response) => {
+      // Validar código de estado HTTP exitoso [cite: 115]
+      expect(response.status).to.eq(200);
+      
+      // Comprobar la existencia estructural y el tipo de dato de las propiedades [cite: 119, 120, 121]
+      expect(response.body).to.have.property('data');
+      expect(response.body.data).to.be.an('array');
+      
+      // Validar datos específicos internos [cite: 142, 143]
+      expect(response.body.data[0]).to.have.property('id', 7);
+    });
+  });
+
+  it('Debería dar de alta un recurso mediante un método POST', () => {
+    const newUser = { "name": "Martín", "job": "QA Automation Lead" }; [cite: 128]
+    
+    cy.request('POST', "https://reqres.in/api/users", newUser).then((response) => {
+      expect(response.status).to.eq(201); // 201 Created [cite: 133]
+      expect(response.body).to.have.property('name', newUser.name); [cite: 134]
+      expect(response.body).to.have.property('job', newUser.job); [cite: 135]
+    });
+  });
+});
+</pre>
+
+    <h2 id="buenas-practicas">8. Buenas Prácticas y Configuración Avanzada</h2>
+    <h3>Organización Modular de Suites</h3>
+    <p>Separa lógicamente tus archivos de prueba basándote en dominios o módulos funcionales del negocio[cite: 145,
+        146]:</p>
+    <pre>
+describe('Módulo: Autenticación de Usuarios', () => { ... }); [cite: 147]
+describe('Módulo: Gestión del Perfil de Usuario', () => { ... }); [cite: 149]
+describe('Módulo: Procesos de Pago y Pasarela', () => { ... }); [cite: 151]
+</pre>
+
+    <h3>Uso de Alias (Alias con .as())</h3>
+    <p>Asigna identificadores dinámicos amigables a tus consultas para reutilizarlas a lo largo del test sin duplicar
+        localizadores[cite: 153]:</p>
+    <pre>
+cy.get('img[alt="Logo corporativo"]').as('imagenPrincipal'); [cite: 154]
+// Más adelante en tu código:
+cy.get('@imagenPrincipal').should('be.visible'); [cite: 69]
+</pre>
+
+    <h3>Configuración Global de Medios (cypress.config.js)</h3>
+    <p>Para activar y parametrizar la generación de evidencias en video o capturas automatizadas ante fallas en los
+        pipelines, utiliza los siguientes indicadores[cite: 156]:</p>
+    <pre>
+const { defineConfig } = require("cypress");
+
+module.exports = defineConfig({
+  video: true,                  // Graba un video de la ejecución del test [cite: 158]
+  videoCompression: false,       // Evita ralentizaciones de compresión [cite: 159]
+  screenshotOnRunFailure: true,  // Toma fotos automáticamente si un test falla [cite: 160]
+  e2e: {
+    setupNodeEvents(on, config) {
+      // Eventos del ciclo de vida de Node aquí [cite: 162]
+    },
+  },
+});
+</pre>
+
+    <h2 id="pruebas-accesibilidad">9. Pruebas de Accesibilidad Web (A11y)</h2>
+    <p>Garantizar que tu portal cumpla con los estándares de accesibilidad internacional es sumamente sencillo acoplando
+        el motor de auditoría <b>axe-core</b> al ecosistema de Cypress[cite: 165].</p>
+
+    <pre>
+# Instalación del conector de accesibilidad en el proyecto [cite: 165]
+npm install --save-dev cypress-axe
+</pre>
+
+    <h3>Implementación Completa</h3>
+    <pre>
+import 'cypress-axe'; // Inyección de los comandos de validación accesibles [cite: 167]
+
+describe('Suite: Auditoría de Accesibilidad', () => {
+  it('La página de inicio no debería poseer infracciones críticas de maquetación', () => {
+    cy.visit('https://blazedemo.com'); [cite: 170]
+    
+    // Inyecta de forma interna el motor axe runtime [cite: 171]
+    cy.injectAxe(); [cite: 171]
+    
+    // Ejecuta el análisis acotándolo a impactos críticos y serios [cite: 172, 173]
+    cy.checkA11y(null, {
+      includedImpacts: ['critical', 'serious'] [cite: 173]
+    });
+  });
+});
+</pre>
+
+    <h2 id="alertas-descuentos">10. Validación de Alertas y Flujos Dinámicos</h2>
+    <h3>Escucha de Alertas Nativas de la Ventana (window:alert)</h3>
+    <p>Cypress atrapa y aprueba automáticamente los pop-ups informativos del navegador, pero permite interceptar el
+        texto para auditar su contenido[cite: 183, 184]:</p>
+    <pre>
+cy.on('window:alert', (textoAlerta) => { [cite: 184]
+  expect(textoAlerta).to.equal('Product added'); // Valida el string de la alerta [cite: 185]
+});
+</pre>
+
+    <h3>Comparación de Diferencia de Valores Dinámicos</h3>
+    <p>Para comprobar que un descuento promocional alteró de manera real el balance final de una compra, se puede
+        asertar el cambio de valor numérico[cite: 177]:</p>
+    <pre>
+// Almacenar el estado original del elemento de precio [cite: 178]
+const precioAntes = cy.get('.OrderSummary__price');
+
+cy.get('[name="promo"]').type('CUPON_DESCUENTO'); [cite: 179]
+cy.get('.btn-aplicar').click(); [cite: 180]
+
+// El nuevo estado no debería ser idéntico al patrón anterior [cite: 181, 182]
+const precioDespues = cy.get('.OrderSummary__price');
+precioAntes.should('not.equal', precioDespues); [cite: 182]
+</pre>
+
+    <h2 id="dockerizacion">11. Dockerización de Pruebas en Cypress</h2>
+    <p>Para empaquetar de forma portable y limpia tus suites E2E impidiendo que dependan de las librerías gráficas
+        locales de un sistema anfitrión, utiliza contenedores Docker.</p>
+
+    <h3>1. Dockerfile (Ubicado en la raíz del proyecto) [cite: 189]</h3>
+    <pre>
+# Usar la imagen oficial preconfigurada con todas las dependencias y navegadores necesarios
+FROM cypress/included:latest
+
+# Directorio de trabajo interno del contenedor [cite: 190]
+WORKDIR /e2e
+
+# Copiar el directorio del proyecto local al espacio interno del contenedor [cite: 191]
+COPY cypress/ ./
+COPY cypress.config.js ./
+
+# Comando de ejecución automatizado por defecto al instanciar el contenedor [cite: 192]
+CMD ["cypress", "run"]
+</pre>
+
+    <h3>2. Comandos Operativos de la CLI</h3>
+    <ul>
+        <li><b>Construir la imagen de Docker local:</b> Empaqueta la app bajo una etiqueta identificatoria[cite: 187].
+            <pre>docker build -t cypress-test -f Dockerfile .</pre>
+        </li>
+        <li><b>Ejecutar el set de pruebas completo en aislamiento total:</b> Corre los tests en modo headless dentro del
+            contenedor[cite: 188].
+            <pre>docker run cypress-test:latest</pre>
+        </li>
+    </ul>
+
+</body>
+
+</html>

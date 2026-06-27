@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.25;
+            color: #333333;
+        }
+
+        h1 {
+            color: #1a365d;
+            border-bottom: 2px solid #2b6cb0;
+            padding-bottom: 8px;
+            margin-top: 24px;
+            margin-bottom: 16px;
+        }
+
+        h2 {
+            color: #2b6cb0;
+            margin-top: 20px;
+            margin-bottom: 12px;
+        }
+
+        h3 {
+            color: #4a5568;
+            margin-top: 16px;
+            margin-bottom: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+            margin-bottom: 16px;
+        }
+
+        th {
+            background-color: #f7fafc;
+            color: #2d3748;
+            font-weight: bold;
+            border: 1px solid #e2e8f0;
+            padding: 10px;
+            text-align: left;
+        }
+
+        td {
+            border: 1px solid #e2e8f0;
+            padding: 10px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+
+        pre {
+            background-color: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            padding: 12px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            margin-top: 8px;
+            margin-bottom: 16px;
+        }
+
+        ul,
+        ol {
+            margin-top: 8px;
+            margin-bottom: 16px;
+            padding-left: 24px;
+        }
+
+        li {
+            margin-bottom: 6px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Guía Completa de Playwright: Apuntes Profesionales de Automatización</h1>
+
+    <h2>Índice General</h2>
+    <ol>
+        <li><a href="#introduccion">Introducción y Configuración Inicial</a></li>
+        <li><a href="#comandos">Comandos Esenciales de la CLI</a></li>
+        <li><a href="#conceptos-clave">Conceptos Clave de la Arquitectura</a></li>
+        <li><a href="#interaccion-elementos">Interacción con Elementos y Selectores Básicos</a></li>
+        <li><a href="#localizadores-avanzados">Localizadores Avanzados (Locators)</a></li>
+        <li><a href="#acciones-aserciones">Acciones y Aserciones Frecuentes</a></li>
+        <li><a href="#manejo-eventos">Manejo de Eventos y Sincronización</a></li>
+        <li><a href="#hooks-anotaciones">Hooks y Anotaciones del Test Runner</a></li>
+        <li><a href="#patrones-diseno">Patrones de Diseño y Buenas Prácticas (POM)</a></li>
+        <li><a href="#mocking-apis">Interceptación y Simulación de APIs (Mocking)</a></li>
+        <li><a href="#testing-visual">Testing Visual y Capturas de Pantalla</a></li>
+    </ol>
+
+    <div style="margin-bottom: 24px;"></div>
+
+    <h2 id="introduccion">1. Introducción y Configuración Inicial</h2>
+    <p>Playwright es un framework moderno de automatización de pruebas de extremo a extremo (E2E) desarrollado por
+        Microsoft. Ofrece un soporte nativo y multiplataforma para los principales motores de renderizado del mercado
+        (Chromium, WebKit y Firefox), permitiendo además la ejecución en segundo plano (modo <i>headless</i>) por
+        defecto para optimizar los tiempos de integración continua.</p>
+
+    <h3>Consejo de Productividad en el IDE</h3>
+    <p>Para evitar las interferencias del autocompletado nativo o sugerencias en línea mientras se escribe código en
+        editores como Visual Studio Code, se puede deshabilitar temporalmente la herramienta ejecutando la combinación
+        de teclas:</p>
+    <pre>Control + Shift + P -> Escribir "Disable Inline Suggestions"</pre>
+
+    <h2 id="comandos">2. Comandos Esenciales de la CLI</h2>
+    <p>La interfaz de línea de comandos (CLI) de Playwright permite inicializar proyectos, ejecutar pruebas bajo
+        diferentes modalidades y consultar reportes detallados tras cada ejecución.</p>
+    <ul>
+        <li><b>Inicializar un proyecto desde cero:</b> Instala las dependencias y genera la estructura base del entorno.
+            <pre>npm init playwright@latest</pre>
+        </li>
+        <li><b>Ejecutar todo el set de pruebas:</b> Corre todos los archivos de test configurados en el proyecto.
+            <pre>npx playwright test</pre>
+        </li>
+        <li><b>Ejecutar un archivo específico:</b> Restringe la ejecución a una suite o módulo concreto.
+            <pre>npx playwright test hooks.spec.ts</pre>
+        </li>
+        <li><b>Ejecutar en Modo UI:</b> Abre una interfaz gráfica interactiva ideal para depurar y ver los pasos en
+            tiempo real.
+            <pre>npx playwright test hooks.spec.ts --ui</pre>
+        </li>
+        <li><b>Actualizar capturas de referencia (Visual Testing):</b> Regenera las imágenes patrón tras cambios
+            legítimos en la interfaz gráfica.
+            <pre>npx playwright test visual.spec.ts --update-snapshots</pre>
+        </li>
+        <li><b>Visualizar el reporte de resultados:</b> Despliega un servidor local para inspeccionar detalladamente el
+            éxito, fallo o trazas de las pruebas.
+            <pre>npx playwright show-report</pre>
+        </li>
+    </ul>
+
+    <h2 id="conceptos-clave">3. Conceptos Clave de la Arquitectura</h2>
+    <p>Para diseñar arquitecturas de pruebas robustas, es indispensable comprender la diferencia entre los componentes
+        estructurales de Playwright:</p>
+    <ul>
+        <li><b>Worker (Proceso Independiente):</b> Es un proceso del sistema operativo aislado que ejecuta un conjunto
+            de pruebas. Incrementar el número de hilos o <i>workers</i> permite paralelizar el set de pruebas,
+            reduciendo drásticamente el tiempo de ejecución global.</li>
+        <li><b>Contexto del Navegador (BrowserContext):</b> Es equivalente a una sesión de incógnito completamente
+            aislada. Un único navegador puede albergar múltiples contextos de forma simultánea sin compartir cookies,
+            almacenamiento local ni sesiones. Esto es ideal para probar escenarios multiusuario (por ejemplo,
+            interacciones en tiempo real entre un Usuario A y un Usuario B).</li>
+        <li><b>Página (Page):</b> Representa una pestaña o ventana individual dentro de un contexto específico.</li>
+    </ul>
+
+    <h3>Jerarquía de Componentes</h3>
+    <pre>
+Navegador (Browser)
+ ├─ Contexto 1 (Usuario A - Sesión A)
+ │   └─ Página (Pestaña 1)
+ ├─ Contexto 2 (Usuario B - Sesión B)
+ │   └─ Página (Pestaña 1)
+ └─ Contexto 3 (Usuario C - Sesión C)
+     └─ Página (Pestaña 1)
+</pre>
+
+    <h3>Uso Crítico de Asincronismo (async / await)</h3>
+    <p>Debido a que las interacciones con el navegador ocurren de manera asíncrona a través de la red, la palabra clave
+        <code>await</code> debe anteceder a cada operación que interactúe con la página. Esto asegura que Playwright
+        espere a que la acción termine (como dar un clic o escribir texto) antes de continuar a la siguiente línea de
+        instrucción.</p>
+
+    <h3>Ejemplo Práctico de Gestión de Contextos</h3>
+    <pre>
+const { chromium } = require('playwright');
+
+(async () => {
+  // Lanzamiento del navegador en modo visible (headless: false)
+  const browser = await chromium.launch({ headless: false });
+  
+  // Creación de un contexto aislado
+  const googleContext = await browser.newContext();
+  const googlePage = await googleContext.newPage();
+  
+  // Navegación y operaciones en la página
+  await googlePage.goto('https://www.google.com/');
+  await googlePage.waitForTimeout(2000);
+  
+  console.log('Título de la página:', await googlePage.title());
+  
+  // Cierre ordenado de los recursos
+  await googlePage.close();
+  await googleContext.close();
+  await browser.close();
+})();
+</pre>
+
+    <h2 id="interaccion-elementos">4. Interacción con Elementos y Selectores Básicos</h2>
+    <p>A pesar de que Playwright recomienda el uso de selectores basados en accesibilidad, también ofrece compatibilidad
+        total con selectores CSS estándar para casos específicos.</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Tipo de Selector CSS</th>
+                <th>Criterio de Búsqueda</th>
+                <th>Ejemplo de Sintaxis</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><b>.clase</b></td>
+                <td>Busca elementos asociados a una clase específica.</td>
+                <td><code>page.locator('.new-todo')</code></td>
+            </tr>
+            <tr>
+                <td><b>#id</b></td>
+                <td>Busca un elemento único a través de su identificador.</td>
+                <td><code>page.locator('#APjFqb')</code></td>
+            </tr>
+            <tr>
+                <td><b>tag</b></td>
+                <td>Busca elementos por su etiqueta HTML.</td>
+                <td><code>page.locator('a')</code></td>
+            </tr>
+            <tr>
+                <td><b>[atributo]</b></td>
+                <td>Busca elementos que posean un atributo específico.</td>
+                <td><code>page.locator('[data-test]')</code></td>
+            </tr>
+            <tr>
+                <td><b>[atributo="valor"]</b></td>
+                <td>Filtra elementos cuyo atributo coincida exactamente con el valor.</td>
+                <td><code>page.locator('[data-test="Cappuccino"]')</code></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p><b>Nota sobre la resolución de ambigüedades:</b> Si un selector CSS coincide con múltiples elementos idénticos en
+        el DOM, se pueden emplear los métodos <code>.first()</code> o <code>.last()</code> para interactuar
+        explícitamente con el primer o el último elemento de la lista devuelta.</p>
+
+    <h2 id="localizadores-avanzados">5. Localizadores Avanzados (Locators)</h2>
+    <p>Los métodos <code>getBy*</code> representan las mejores prácticas de automatización, ya que emulan la forma en
+        que un usuario real o una tecnología de asistencia interactúan con la interfaz gráfica, volviendo los tests
+        inmunes a cambios menores en la estructura HTML interna.</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Método Localizador</th>
+                <th>Elementos Típicos Destino</th>
+                <th>Ejemplo de Aplicación Profesional</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>getByRole()</code></td>
+                <td>Botones, enlaces, encabezados u otros roles accesibles.</td>
+                <td><code>await page.getByRole('button', { name: 'Login' }).click();</code></td>
+            </tr>
+            <tr>
+                <td><code>getByText()</code></td>
+                <td>Cualquier elemento que contenga un texto visible en pantalla.</td>
+                <td><code>await page.getByText('Logged in as Simon').toBeVisible();</code></td>
+            </tr>
+            <tr>
+                <td><code>getByLabel()</code></td>
+                <td>Campos de entrada asociados directamente a una etiqueta &lt;label&gt;.</td>
+                <td><code>await page.getByLabel('Email').fill('user@test.com');</code></td>
+            </tr>
+            <tr>
+                <td><code>getByPlaceholder()</code></td>
+                <td>Inputs que poseen texto de sugerencia interno o placeholder.</td>
+                <td><code>await page.getByPlaceholder('Password').fill('1234');</code></td>
+            </tr>
+            <tr>
+                <td><code>getByAltText()</code></td>
+                <td>Imágenes que contienen texto alternativo (atributo alt).</td>
+                <td><code>await page.getByAltText('Logo Principal').click();</code></td>
+            </tr>
+            <tr>
+                <td><code>getByTitle()</code></td>
+                <td>Elementos con información emergente definida en el atributo title.</td>
+                <td><code>await page.getByTitle('Cerrar Ventana').click();</code></td>
+            </tr>
+            <tr>
+                <td><code>getByTestId()</code></td>
+                <td>Elementos marcados con atributos específicos de testing (por defecto data-testid).</td>
+                <td><code>await page.getByTestId('submit-btn').click();</code></td>
+            </tr>
+            <tr>
+                <td><code>locator()</code></td>
+                <td>Estrategia comodín para selectores CSS complejos o XPath.</td>
+                <td><code>await page.locator('#main-panel .item-active').click();</code></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2 id="acciones-aserciones">6. Acciones y Aserciones Frecuentes</h2>
+    <p>Playwright utiliza aserciones de tipo <i>Web-First</i>, lo que significa que el framework esperará
+        automáticamente de forma interna a que se cumpla la condición solicitada (por ejemplo, que el elemento sea
+        visible) antes de lanzar un error por timeout.</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Acción / Verificación Deseada</th>
+                <th>Implementación en Playwright (Sintaxis Correcta)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Hacer clic en un elemento</td>
+                <td><code>await page.locator('#btn-id').click();</code></td>
+            </tr>
+            <tr>
+                <td>Escribir o rellenar texto</td>
+                <td><code>await page.locator('.input-class').fill('Texto ejemplo');</code></td>
+            </tr>
+            <tr>
+                <td>Presionar una tecla del teclado</td>
+                <td><code>await page.press('#input-id', 'Enter');</code></td>
+            </tr>
+            <tr>
+                <td>Seleccionar una opción en un menú desplegable</td>
+                <td><code>await page.locator('#days').selectOption('10');</code></td>
+            </tr>
+            <tr>
+                <td>Validar visibilidad afirmativa</td>
+                <td><code>await expect(page.locator('.alerta')).toBeVisible();</code></td>
+            </tr>
+            <tr>
+                <td>Validar invisibilidad o ausencia</td>
+                <td><code>await expect(page.locator('.modal')).not.toBeVisible();</code></td>
+            </tr>
+            <tr>
+                <td>Verificar el contenido de texto exacto</td>
+                <td><code>await expect(page.locator('#title')).toHaveText('Bienvenido');</code></td>
+            </tr>
+            <tr>
+                <td>Verificar el valor actual de un input</td>
+                <td><code>await expect(page.locator('#email')).toHaveValue('user@test.com');</code></td>
+            </tr>
+            <tr>
+                <td>Validar la URL actual del navegador</td>
+                <td><code>await expect(page).toHaveURL('https://ejemplo.com/dashboard');</code></td>
+            </tr>
+            <tr>
+                <td>Validar el título de la pestaña actual</td>
+                <td><code>await expect(page).toHaveTitle('Página de Inicio');</code></td>
+            </tr>
+            <tr>
+                <td>Imprimir la URL actual en consola</td>
+                <td><code>console.log(await page.url());</code></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2 id="manejo-eventos">7. Manejo de Eventos y Sincronización</h2>
+    <p>Controlar los tiempos de carga y las respuestas asíncronas es fundamental para evitar la inestabilidad
+        (<i>flakiness</i>) en los entornos distribuidos.</p>
+
+    <h3>Estrategias de Esperas</h3>
+    <ul>
+        <li><b>Esperas Implícitas:</b> Es el tiempo que Playwright espera por defecto antes de fallar cuando intenta
+            realizar una acción sobre un elemento que aún no está listo en el DOM.</li>
+        <li><b>Esperas Condicionales / Explícitas:</b> Se utilizan para forzar la sincronización del código ante cambios
+            estructurales pesados. Ejemplos de métodos: <code>waitForURL</code> o <code>waitForSelector</code>.</li>
+    </ul>
+
+    <h3>Ejemplo de Sincronización Avanzada con Promesas</h3>
+    <p>Cuando una acción (como dar un clic) desencadena un cambio drástico o una redirección compleja, es una excelente
+        práctica envolver ambas operaciones en un bloque <code>Promise.all</code> para mitigar condiciones de carrera:
+    </p>
+    <pre>
+await Promise.all([
+  page.waitForURL('https://www.facebook.com/'),
+  page.click('button[name="login"]')
+]);
+</pre>
+
+    <h3>Escucha de Eventos del Navegador</h3>
+    <p>Playwright puede interceptar eventos nativos lanzados por la aplicación, tales como la apertura de pop-ups o
+        redirecciones de marcos internos (iframes):</p>
+    <pre>
+// Capturar la apertura de una nueva pestaña (Pop-up)
+page.on('popup', async popup => {
+  console.log('Título de la nueva pestaña:', await popup.title());
+});
+
+// Registrar eventos de navegación interna dentro de un iframe
+page.on('framenavigated', frame => {
+  console.log('Frame redirigido a:', frame.url());
+});
+</pre>
+
+    <h2 id="hooks-anotaciones">8. Hooks y Anotaciones del Test Runner</h2>
+    <p>El <i>Test Runner</i> automatiza la organización, ejecución y reporte de tus pruebas. Los hooks permiten preparar
+        y limpiar el entorno antes y después de cada test.</p>
+
+    <h3>Ciclo de Vida de los Hooks</h3>
+    <ul>
+        <li><code>beforeAll</code>: Se ejecuta una única vez antes de iniciar cualquier prueba del archivo (ideal para
+            levantar bases de datos o configuraciones globales).</li>
+        <li><code>beforeEach</code>: Se ejecuta antes de cada test individual (ideal para navegar a una URL común).</li>
+        <li><code>afterEach</code>: Se ejecuta al terminar cada test de manera individual.</li>
+        <li><code>afterAll</code>: Se ejecuta una única vez cuando todas las pruebas del archivo han concluido.</li>
+    </ul>
+
+    <h3>Anotaciones Especiales para el Control de Flujo</h3>
+    <ul>
+        <li><code>test.only</code>: Ejecuta exclusivamente esa prueba, ignorando las demás del archivo.</li>
+        <li><code>test.skip</code>: Omite la prueba por completo durante la ejecución.</li>
+        <li><code>test.fixme</code>: Declara que la prueba está rota o desactualizada y no debe ejecutarse hasta que sea
+            reparada.</li>
+        <li><code>test.describe.serial</code>: Agrupa pruebas que deben ejecutarse obligatoriamente en estricto orden
+            secuencial debido a que dependen del estado del test anterior.</li>
+    </ul>
+
+    <h3>Código de Ejemplo Estructurado</h3>
+    <pre>
+import { test, expect } from '@playwright/test';
+
+test.describe('Suite de Pruebas de Tareas de Usuario', () => {
+
+  test.beforeAll(async () => {
+    console.log('Iniciando el entorno general de pruebas...');
+  });
+
+  test.beforeEach(async ({ page }) => {
+    console.log('Navegando a la aplicación antes del test...');
+    await page.goto('https://demo.playwright.dev/todomvc/');
+  });
+
+  test('Validar título del sitio', async ({ page }) => {
+    await expect(page).toHaveTitle('React • TodoMVC');
+  });
+
+  test('Ingresar texto en la lista y confirmar con Enter', async ({ page }) => {
+    await page.fill('.new-todo', 'comprar pan');
+    await page.press('.new-todo', 'Enter');
+  });
+
+  test.afterAll(async () => {
+    console.log('Limpiando y cerrando el entorno de pruebas...');
+  });
+});
+</pre>
+
+    <h2 id="patrones-diseno">9. Patrones de Diseño y Buenas Prácticas (POM)</h2>
+    <p>Para asegurar la escalabilidad y mantenibilidad del software de pruebas, se recomienda aplicar el patrón de
+        diseño <b>Page Object Model (POM)</b>. Consiste en encapsular la lógica de interacción de cada página web dentro
+        de una clase de JavaScript/TypeScript independiente, evitando la duplicación de Selectores y Código de
+        infraestructura.</p>
+
+    <h3>Estructura Profesional de un Proyecto</h3>
+    <pre>
+mi-proyecto-playwright/
+ ├─ pages/
+ │   ├─ LoginPage.ts
+ │   └─ UserProfilePage.ts
+ └─ tests/
+     └─ login.spec.ts
+</pre>
+
+    <h3>1. Definición de la Clase (pages/LoginPage.ts)</h3>
+    <pre>
+import { Page, Locator } from '@playwright/test';
+
+export class LoginPage {
+  private page: Page;
+  private usernameInput: Locator;
+  private passwordInput: Locator;
+  private loginButton: Locator;
+
+  constructor(page: Page) {
+    this.page = page;
+    this.usernameInput = page.locator('#user-name');
+    this.passwordInput = page.locator('#password');
+    this.loginButton = page.locator('#login-button');
+  }
+
+  async navigate() {
+    await this.page.goto('https://www.saucedemo.com/');
+  }
+
+  async login(username: string, password: string) {
+    await this.usernameInput.fill(username);
+    await this.passwordInput.fill(password);
+    await this.loginButton.click();
+  }
+
+  async getErrorMessage() {
+    return await this.page.textContent('[data-test="error"]');
+  }
+}
+</pre>
+
+    <h3>2. Consumo en el Archivo de Pruebas (tests/login.spec.ts)</h3>
+    <pre>
+import { test, expect } from '@playwright/test';
+import { LoginPage } from '../pages/LoginPage';
+
+test('Debería denegar el acceso ante credenciales inválidas', async ({ page }) => {
+  const login = new LoginPage(page);
+  
+  await login.navigate();
+  await login.login('usuario_invalido', 'clave_incorrecta');
+  
+  const error = await login.getErrorMessage();
+  expect(error).toContain('Epic sadface');
+});
+</pre>
+
+    <h2 id="mocking-apis">10. Interceptación y Simulación de APIs (Mocking)</h2>
+    <p>Playwright cuenta con la capacidad nativa de interceptar peticiones de red salientes (HTTP/API) y simular sus
+        respuestas (<i>mockear</i>). Esto permite aislar por completo las pruebas del Frontend de la disponibilidad o
+        inconsistencia de los servidores de Backend o APIs de terceros.</p>
+
+    <pre>
+import { test, expect } from '@playwright/test';
+
+test('Debería simular la respuesta de una API externa mediante un GET mockeado', async ({ page }) => {
+  const mockedTodo = {
+    userId: 1,
+    id: 1,
+    title: 'Tarea simulada por Playwright para estudiantes',
+    completed: false
+  };
+
+  // Interceptación de la ruta específica de la API antes de que el navegador la llame
+  await page.route('https://jsonplaceholder.typicode.com/todos/1', async route => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify(mockedTodo)
+    });
+  });
+
+  // Ejecución de la acción que detona la petición de red
+  const response = await page.goto('https://jsonplaceholder.typicode.com/todos/1');
+  
+  expect(response).not.toBeNull();
+  expect(response?.status()).toBe(200);
+
+  const data = await response!.json();
+  expect(data).toEqual(mockedTodo);
+});
+</pre>
+
+    <h2 id="testing-visual">11. Testing Visual y Capturas de Pantalla</h2>
+    <p>El testing visual permite detectar regresiones estéticas o de maquetación (como desalineación de elementos CSS o
+        cambios inesperados de color) comparando la pantalla actual de la aplicación contra una captura patrón o de
+        referencia (<i>snapshot</i>).</p>
+
+    <pre>
+import { test, expect } from '@playwright/test';
+
+test('Validación visual completa de la landing page', async ({ page }) => {
+  await page.goto('https://www.saucedemo.com/');
+  
+  // Realiza una captura y comprueba de forma automatizada que coincida con el patrón guardado
+  await expect(page).toHaveScreenshot('pagina-inicial.png');
+});
+</pre>
+
+</body>
+
+</html>

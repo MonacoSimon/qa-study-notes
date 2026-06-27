@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.25;
+            color: #333333;
+        }
+
+        h1 {
+            color: #1a365d;
+            border-bottom: 2px solid #2b6cb0;
+            padding-bottom: 8px;
+            margin-top: 24px;
+            margin-bottom: 16px;
+        }
+
+        h2 {
+            color: #2b6cb0;
+            margin-top: 20px;
+            margin-bottom: 12px;
+        }
+
+        h3 {
+            color: #4a5568;
+            margin-top: 16px;
+            margin-bottom: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+            margin-bottom: 16px;
+        }
+
+        th {
+            background-color: #f7fafc;
+            color: #2d3748;
+            font-weight: bold;
+            border: 1px solid #e2e8f0;
+            padding: 10px;
+            text-align: left;
+        }
+
+        td {
+            border: 1px solid #e2e8f0;
+            padding: 10px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+
+        pre {
+            background-color: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            padding: 12px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            margin-top: 8px;
+            margin-bottom: 16px;
+        }
+
+        ul,
+        ol {
+            margin-top: 8px;
+            margin-bottom: 16px;
+            padding-left: 24px;
+        }
+
+        li {
+            margin-bottom: 6px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Curso de QA Manual: Fundamentos del Aseguramiento de Calidad</h1>
+
+    <h2>Índice General</h2>
+    <ol>
+        <li><a href="#definicion-calidad">Definición de Calidad y Aseguramiento</a></li>
+        <li><a href="#ciclo-pdca">El Ciclo de Mejora Continua (PDCA)</a></li>
+        <li><a href="#taxonomia-fallos">Taxonomía del Error: Error, Defecto, Bug y Falla</a></li>
+        <li><a href="#qa-vs-qc">Diferencias entre Quality Assurance (QA) y Quality Control (QC)</a></li>
+        <li><a href="#planificacion">Planificación Estratégica: Estructura de un Test Plan Profesional</a></li>
+    </ol>
+
+    <div style="margin-bottom: 24px;"></div>
+
+    <h2 id="definicion-calidad">1. Definición de Calidad y Aseguramiento</h2>
+    <p>La <b>calidad de software</b> representa el grado en que un conjunto de características inherentes al sistema
+        cumple con los requerimientos y expectativas explícitas e implícitas del cliente final. Un producto de calidad
+        debe ser apto para su uso operativo basándose en cuatro dimensiones primordiales:</p>
+    <ul>
+        <li><b>Funcionalidad:</b> Ejecuta de manera exacta las acciones para las que fue concebido.</li>
+        <li><b>Diseño y Usabilidad:</b> Presenta una interfaz intuitiva, estética, accesible y ergonómica.</li>
+        <li><b>Fiabilidad:</b> Mantiene la estabilidad ante variaciones del entorno (compatibilidad cruzada en
+            diferentes sistemas operativos o navegadores web).</li>
+        <li><b>Durabilidad/Mantenibilidad:</b> Posee un ciclo de vida útil prolongado, permitiendo actualizaciones
+            fluidas sin comprometer el núcleo del sistema.</li>
+    </ul>
+
+    <h2 id="ciclo-pdca">2. El Ciclo de Mejora Continua (PDCA)</h2>
+    <p>El pilar metodológico del aseguramiento se rige por el ciclo iterativo <b>PDCA</b> (<i>Plan-Do-Check-Act</i> o
+        Planificar-Hacer-Verificar-Actuar):</p>
+    <ol>
+        <li><b>Planificar (Plan):</b> Identificar desvíos en los procesos actuales y trazar un plan de acción con
+            objetivos claros.</li>
+        <li><b>Hacer (Do):</b> Implementar a pequeña escala las modificaciones propuestas para mitigar las fallas.</li>
+        <li><b>Verificar (Check):</b> Evaluar los nuevos datos recopilados para corroborar si los cambios se alinean con
+            las metas originales del negocio.</li>
+        <li><b>Actuar (Act):</b> Institucionalizar las mejoras exitosas a nivel organizacional o iterar nuevamente en
+            caso de desvíos.</li>
+    </ol>
+
+    <h2 id="taxonomia-fallos">3. Taxonomía del Error: Error, Defecto, Bug y Falla</h2>
+    <p>Para comunicarse con propiedad técnica en un equipo ágil, se debe trazar la línea causal de las anomalías:</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Término Técnico</th>
+                <th>Definición Operativa</th>
+                <th>Ejemplo Práctico de Campo</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><b>Error</b></td>
+                <td>Una equivocación o acción incorrecta cometida por un ser humano durante el diseño o la codificación.
+                </td>
+                <td>Un desarrollador confunde un operador lógico y escribe <code>&lt;</code> en lugar de
+                    <code>&lt;=</code>.</td>
+            </tr>
+            <tr>
+                <td><b>Defecto</b></td>
+                <td>La imperfección física o lógica introducida de forma estática en el código fuente o la documentación
+                    a raíz del error humano.</td>
+                <td>La línea de código hereda la condición errónea quedando guardada en el repositorio central.</td>
+            </tr>
+            <tr>
+                <td><b>Falla (Failure)</b></td>
+                <td>La manifestación dinámica y visible de un defecto. Ocurre cuando el programa se ejecuta y se
+                    comporta de manera incorrecta.</td>
+                <td>El usuario final ingresa un valor límite en el sistema y la aplicación se congela o lanza una
+                    excepción.</td>
+            </tr>
+            <tr>
+                <td><b>Bug</b></td>
+                <td>Es la formalización e identificación del defecto una vez que ha sido descubierto por el tester y
+                    registrado oficialmente en una plataforma de gestión.</td>
+                <td>Se crea un ticket detallado en Jira catalogado con prioridad alta para su correspondiente
+                    reparación.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2 id="qa-vs-qc">4. Diferencias entre Quality Assurance (QA) y Quality Control (QC)</h2>
+    <ul>
+        <li><b>Quality Assurance (QA - Aseguramiento):</b> Se enfoca en las actividades orientadas a los
+            <b>procesos</b>. Es de naturaleza preventiva, analizando cómo se construye el software para evitar que
+            ocurran defectos en primer lugar.</li>
+        <li><b>Quality Control (QC - Control de Calidad):</b> Se enfoca en las actividades orientadas al
+            <b>producto</b>. Es de naturaleza reactiva y se encarga de probar e inspeccionar el sistema terminado para
+            identificar defectos latentes antes de su liberación.</li>
+    </ul>
+
+    <h2 id="planificacion">5. Planificación Estratégica: Estructura de un Test Plan Profesional</h2>
+    <p>El <b>Test Plan</b> o Plan de Pruebas es un artefacto formal altamente detallado que describe la estrategia de
+        verificación, cronogramas, estimaciones de esfuerzo, herramientas asignadas y mitigación de riesgos de un
+        proyecto.</p>
+
+    <h3>Estructura Estándar de un Plan de Pruebas (IEEE 829)</h3>
+    <ol>
+        <li><b>Introducción:</b> Breve descripción y contexto macro del sistema de software bajo análisis.</li>
+        <li><b>Propósito y Objetivos:</b> Metas específicas de calidad que se pretenden alcanzar con el proceso de
+            verificación.</li>
+        <li><b>Alcance (Scope):</b>
+            <ul>
+                <li><i>Dentro del alcance:</i> Módulos y funcionalidades exactas a validar.</li>
+                <li><i>Fuera del alcance:</i> Componentes o dependencias explícitamente excluidas del análisis.</li>
+            </ul>
+        </li>
+        <li><b>Estrategia de Prueba:</b> Tipos de pruebas a ejecutar (funcionales, regresión, humo) y enfoque
+            metodológico (QA Manual o Automatizado).</li>
+        <li><b>Criterios de Aceptación:</b>
+            <ul>
+                <li><i>Criterios de Entrada:</i> Requisitos mínimos para dar inicio formal a las pruebas (ej. ambiente
+                    de <i>Staging</i> disponible y código funcional compilado).</li>
+                <li><i>Criterios de Salida:</i> Condiciones obligatorias para dar por concluidas las pruebas (ej. 100%
+                    de casos críticos aprobados y cero bugs de severidad bloqueante abiertos).</li>
+            </ul>
+        </li>
+        <li><b>Cronograma y Plazos:</b> Fechas hito y distribución temporal de las actividades de verificación.</li>
+        <li><b>Recursos Necesarios:</b> Personal asignado, infraestructura de hardware, sistemas operativos objetivo y
+            licencias de software de pruebas.</li>
+        <li><b>Gestión de Riesgos:</b> Identificación de imprevistos potenciales junto a sus respectivos planes de
+            contingencia o mitigación.</li>
+        <li><b>Criterios de Éxito:</b> Parámetros métricos que definen la culminación exitosa del plan de aseguramiento.
+        </li>
+        <li><b>Plan de Comunicación:</b> Canales oficiales (Slack, Teams, Correo) y frecuencia de entrega de los
+            informes de resultados (Status Reports).</li>
+    </ol>
+
+</body>
+
+</html>

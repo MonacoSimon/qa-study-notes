@@ -75,4 +75,4 @@ Opción 2: Extensión Live Server (Recomendado en VS Code)
 Si utilizas Visual Studio Code, instala la extensión Live Server, haz clic derecho sobre index.html y selecciona "Open with Live Server" para contar con recarga en vivo mientras editas tus notas.
 Licencia
 
-Este proyecto se encuentra bajo la Licencia MIT. Consulta el archivo LICENSE para obtener más detalles.
+Este proyecto se encuentra bajo la Licencia Creative Commons. Consulta el archivo LICENSE para obtener más detalles.
